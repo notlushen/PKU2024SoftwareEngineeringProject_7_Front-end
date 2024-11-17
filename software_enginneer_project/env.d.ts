@@ -5,3 +5,4 @@ declare module '*.vue' {
     export default componentOptions
   }
 declare module '@/router/index.js'
+declare module '@/util/*.js'

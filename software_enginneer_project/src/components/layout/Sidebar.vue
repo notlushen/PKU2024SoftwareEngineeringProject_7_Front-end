@@ -8,6 +8,7 @@
           </div>
         </div>
       </div>
+      
       <div class="section">
         <div class="section-title">推荐用户</div>
         <div class="section-content">

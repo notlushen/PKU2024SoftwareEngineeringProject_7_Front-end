@@ -13,19 +13,6 @@
     { id: 2, title: '敏捷开发流程中最需要注意什么', content: '敏捷开发流程中最需要注意什么？' },
     { id: 3, title: 'Node.js 实战', content: 'Node.js 是一个基于Chrome V8引擎的JavaScript运行环境...' },
   ]);
-  const api={
-    loadArticle:"/forum/loadAriticle"
-  };
-  const articleListInfo=ref({});
-  const loadArticle=async ()=>{
-    let result=await Proxy.request({
-      url:api.loadArticle,
-    });
-     if(!result){
-      return;
-     }
-  }
-  loadArticle();
   </script>
   
   <style scoped>

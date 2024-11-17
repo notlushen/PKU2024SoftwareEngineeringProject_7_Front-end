@@ -5,9 +5,6 @@
         <Header />
       </el-header>
       <el-container>
-        <!-- <el-aside width="200px">
-          <Sidebar></Sidebar>
-        </el-aside> -->
         <el-main>
           <router-view></router-view>
         </el-main>
@@ -17,8 +14,13 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from './Sidebar.vue';
 import Header from './Header.vue';
+import { ref } from 'vue'
+
+import { useRouter,useRoute } from 'vue-router';
+const router =useRouter();
+const route =useRoute();
+
 </script>
 
 <style scoped>
@@ -32,12 +34,6 @@ import Header from './Header.vue';
   height: 60px; /* 设置头部的高度 */
   background-color: #fff; /* 设置头部的背景颜色 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
-}
-
-.el-aside {
-  background-color: #f2f2f2; /* 设置侧边栏的背景颜色 */
-  color: #333; /* 设置侧边栏的文字颜色 */
-  overflow: auto; /* 添加滚动条 */
 }
 
 .el-main {

@@ -1,15 +1,18 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+  <el-config-provider :message="config" :locale="locale">
+
+    <div id="app">
+      <router-view></router-view>
+    </div>
+  </el-config-provider>
+
 </template>
 
 <script setup>
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-const language = ref('zh-cn')
 const locale = zhCn;
 
-import {RouterView,RouterLink} from 'vue-router';
+import { RouterView, RouterLink } from 'vue-router';
 import { reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 const config = reactive({
@@ -21,7 +24,4 @@ const config = reactive({
 
 </script>
 
-<style>
-
-
-</style>
+<style></style>

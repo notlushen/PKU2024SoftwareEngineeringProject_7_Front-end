@@ -24,8 +24,17 @@ export default defineConfig({
     
   ],
    server:{
-    open:true,
+    hmr:true,
+    port:5179,
+    proxy:{
+          "/api":{
+          target:'http://127.0.0.1:5000',
+          changeOrigin:true,
+          rewrite:(path)=>path.replace(/^\/api/,'/'),
+      }
    },
+  },
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

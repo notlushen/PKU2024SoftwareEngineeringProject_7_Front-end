@@ -7,14 +7,14 @@ import Team from '@/views/index/Team.vue';
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/index'
   },
   
   {
     path: '/index',
     name: 'index',
     redirect:'/index/home',
-    component: () => import('../components/layout/Index.vue'),
+    component: () => import('../components/layout/Layout.vue'),
     children: [
       {
         path: '/index/home',

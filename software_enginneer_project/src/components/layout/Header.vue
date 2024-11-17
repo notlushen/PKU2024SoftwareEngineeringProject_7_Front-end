@@ -1,25 +1,38 @@
 <template>
   <div class="header">
     <div class="webheader">
+      <!--Logo-->
+      <router-link to="/" class="logo">智学</router-link>
+      <!--菜单-->
       <MyMenu></MyMenu>
+      <!--搜索框-->
       <div class="header-search">
         <el-input v-model="formInline.content" type="search" placeholder="搜索问题..." class="search-input" />
         <el-button type="primary" round>
           搜索
         </el-button>
+        <el-button type="primary" round>
+          发帖
+        </el-button>
       </div>
+      <!--用户信息-->
       <div class="user">
+        <!-- <Dialog :show="showDialog" :buttons="buttons" @close="showDialog=false">
+          <div :style="{height:'1500px'}" >neirong</div>
+        </Dialog> -->
+        <el-button type="primary" plain @click="login">登录/注册</el-button>
         <el-dropdown>
           <span class="el-dropdown-link">
             {{user.name}}
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item >个人中心</el-dropdown-item>
-              <el-dropdown-item divided @click="$router.push('/login')">退出</el-dropdown-item>
+              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item divided>退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+
       </div>
     </div>
   </div>
@@ -27,22 +40,36 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-const router=useRouter()
 import { ElMenu, ElMenuItem, ElInput, ElButton } from 'element-plus';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import MyMenu from './MyMenu.vue';
 import { ArrowDown } from '@element-plus/icons-vue'
+
+const router = useRouter();
 const formInline = reactive({
   content: '',
-})
+});
+
 const user = reactive({
   name: '我不是陆神',
-})
+});
+
+const showDialog = ref(true);
+const buttons = [{
+  type: "primary",
+  text: "确定",
+}]
+
+const login = () => {
+  router.push('/login')
+}
 // 定义一个方法来处理搜索表单的提交
 const handleSearch = (event) => {
   // 您可以在这里添加搜索逻辑，例如使用Vue的路由或调用API
   console.log('搜索被触发');
 };
+
+
 </script>
 
 <style scoped>
@@ -58,18 +85,35 @@ const handleSearch = (event) => {
 .webheader {
   display: flex;
   align-items: center;
-  min-width: 1000px;
-  margin: auto;
+  width: 100%;
 }
-
 
 .el-container .el-header {
   padding: 0;
 }
 
+.user {
+  position: relative;
+  right: 0px;
+  display: flex;
+  align-items: center;
+
+}
+
 .el-header .el-menu--horizontal {
   border: 0;
-  width: 430px;
+  width: 900px;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bolder;
+  text-decoration: none;
+  color: red;
+  position: relative;
+  margin-left: 10px;
+  padding-right: 10px;
+
 }
 
 .header-search {
@@ -87,5 +131,23 @@ const handleSearch = (event) => {
   color: var(--el-color-primary);
   display: flex;
   align-items: center;
+}
+
+/* 媒体查询 */
+@media (max-width: 568px) {
+  .header-search .el-input {
+    width: 100px;
+    padding: 0px 10px;
+  }
+
+  .el-header .el-menu--horizontal {
+    border: 0;
+    width: 10%;
+  }
+
+  .logo {
+    display: none;
+    /* 隐藏用户信息和logo */
+  }
 }
 </style>
