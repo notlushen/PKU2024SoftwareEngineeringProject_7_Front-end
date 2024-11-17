@@ -103,7 +103,7 @@ function resetForm2() {
 async function confirmLogin(id: string, password: string) {
     console.log(id, password);
     try {
-        let res = await proxy.Request({
+        let res = await Request({
             url: '/login',
             params: {
                 id: id,
