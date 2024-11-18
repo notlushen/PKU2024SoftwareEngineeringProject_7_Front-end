@@ -16,14 +16,10 @@
         </el-button>
       </div>
       <!--用户信息-->
-      <div class="user">
-        <!-- <Dialog :show="showDialog" :buttons="buttons" @close="showDialog=false">
-          <div :style="{height:'1500px'}" >neirong</div>
-        </Dialog> -->
-        <el-button type="primary" plain @click="login">登录/注册</el-button>
+      <div v-if="userInfo.userId">
         <el-dropdown>
           <span class="el-dropdown-link">
-            {{user.name}}
+            {{ userInfo.userId }}
           </span>
           <template #dropdown>
             <el-dropdown-menu>
@@ -34,6 +30,14 @@
         </el-dropdown>
 
       </div>
+      <div class="user" v-else>
+        <!-- <Dialog :show="showDialog" :buttons="buttons" @close="showDialog=false">
+          <div :style="{height:'1500px'}" >neirong</div>
+        </Dialog> -->
+        <el-button type="primary" plain @click="login">登录/注册</el-button>
+
+
+      </div>
     </div>
   </div>
 </template>
@@ -41,17 +45,13 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ElMenu, ElMenuItem, ElInput, ElButton } from 'element-plus';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import MyMenu from './MyMenu.vue';
 import { ArrowDown } from '@element-plus/icons-vue'
 
 const router = useRouter();
 const formInline = reactive({
   content: '',
-});
-
-const user = reactive({
-  name: '我不是陆神',
 });
 
 const showDialog = ref(true);
@@ -68,8 +68,40 @@ const handleSearch = (event) => {
   // 您可以在这里添加搜索逻辑，例如使用Vue的路由或调用API
   console.log('搜索被触发');
 };
+import { useStore } from 'vuex';
+const store = useStore();
+const userInfo = ref({});
+onMounted(() => {
+  getUserInfo();
+});
 
+const getUserInfo = async () => {
+  let res = await Request({
+    url: '/getUserInfo',
+    params: {
+      id: id,
+      password: password,
+    },
+    dataType: "json",
+  });
+  if (!res) {
+    return;
+  }
+  store.commit("updateLoginUserInfo", res.data)
+}
 
+watch(
+  () => store.state.loginUserInfo,
+  (newVal, oldVal) => {
+    if (newVal != undefined && newVal != null) {
+      userInfo.value = newVal;
+    }
+    else {
+      userInfo = {};
+    }
+  }
+
+);
 </script>
 
 <style scoped>
