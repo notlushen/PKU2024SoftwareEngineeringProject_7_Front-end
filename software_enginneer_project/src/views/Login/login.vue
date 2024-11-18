@@ -6,50 +6,45 @@
         <div class="login-item">
             <el-tabs v-model="activeName" class="demo-tabs">
                 <el-tab-pane label="登录" name="first">
-                    <el-form :model="form1" label-width="auto" style="max-width: 600px">
-                        <el-form-item label="账号" prop="account">
-                            <el-input v-model="form1.userid" placeholder="请输入账号" />
+
+                    <el-form :model="loginForm" :rules="rules1" ref="loginFormRef" label-width="auto" style="max-width: 600px">
+                        <el-form-item label="北大邮箱账号" prop="userid">
+                            <el-input v-model="loginForm.userid" placeholder="请输入北大邮箱账号" />
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
-                            <el-input v-model="form1.password" type="password" show-password placeholder="请输入密码" />
+                            <el-input v-model="loginForm.password" type="password" show-password placeholder="请输入密码" />
                         </el-form-item>
                         <el-form-item label="验证码" prop="checkcode">
-                            <div class="checkcode"> <el-input v-model="form1.checkcode" placeholder="请输入验证码" />
+                            <div class="checkcode">
+                                <el-input v-model="loginForm.checkcode" placeholder="请输入验证码" />
                                 <checkcode :identifyCode="identifyCode" @click="refreshCode"></checkcode>
-
                             </div>
+                        </el-form-item>
+                        <el-button type="primary" @click="onLogin">登录</el-button>
 
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" @click="onLogin">登录</el-button>
-                        </el-form-item>
                     </el-form>
                 </el-tab-pane>
                 <el-tab-pane label="注册" name="second">
-                    <el-form :model="form2" label-width="auto" style="max-width: 600px">
-
-                        <el-form-item label="北京大学邮箱账号">
-                            <el-input v-model="form2.userid" />
+                    <el-form :model="signupForm" :rules="rules2" ref="signupFormRef" label-width="auto" style="max-width: 600px">
+                        <el-form-item label="北京大学邮箱账号" prop="userid">
+                            <el-input v-model="signupForm.userid" />
                         </el-form-item>
 
-                        <el-form-item label="验证码">
+                        <el-form-item label="验证码" prop="emailcode">
                             <div class="code-btn">
-                                <el-input v-model="form2.emailcode" maxlength="6" />
+                                <el-input v-model="signupForm.emailcode" maxlength="6" />
                                 <el-link type="primary">获得验证码</el-link>
                             </div>
                         </el-form-item>
+                        <el-form-item label="密码" prop="password">
+                            <el-input v-model="signupForm.password" type="password" show-password />
+                        </el-form-item>
+                        <el-form-item label="用户昵称" prop="username">
+                            <el-input v-model="signupForm.username" />
+                        </el-form-item>
 
-                        <el-form-item label="密码">
-                            <el-input v-model.number="form2.password" type="password" show-password />
-                        </el-form-item>
-                        <el-form-item label="用户昵称">
-                            <el-input v-model.number="form2.username" type="password" show-password />
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" @click="onSignup">注册</el-button>
-                        </el-form-item>
                     </el-form>
-
+                    <el-button type="primary" @click="onSignup">注册</el-button>
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -57,59 +52,90 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive , onMounted} from 'vue'
+import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import type { TabsPaneContext } from 'element-plus'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import type { Action } from 'element-plus'
-import Request from '@/utils/Request.js'
+import { useStore } from 'vuex';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import Request from '@/utils/Request.js';
 import axios from 'axios';
-const router = useRouter()
+import type { FormInstance } from 'element-plus'
+import type {  FormRules } from 'element-plus'
+const router = useRouter();
+const store = useStore();
+interface RuleForm {
+    userid: string
+    password: string
+    checkcode: string
+    emailcode:string,
+    username: string,
+}
 
-//登录注册的表单
-const activeName = ref('first')
-const form1 = reactive({
+//表单处理
+const activeName = ref('first');
+const loginForm = reactive<RuleForm>({
     userid: '',
     password: '',
     checkcode: '',
+    emailcode: '',
+    username: '',
+});
+const loginFormRef = ref<FormInstance>()
+const signupFormRef = ref<FormInstance>()
 
-})
-const form2 = reactive({
+const signupForm = reactive({
     userid: '',
     username: '',
     password: '',
     emailcode: '',
     checkcode: '',
+});
+const rules1 = reactive<FormRules<RuleForm>>({
+    userid: [
+        { required: true, message: '请输入账号', trigger: 'blur' },
+        {
+          type: 'email',
+          message: '请输入正确的邮箱地址',
+          trigger: ['blur', 'change'],
+        },
+    ],
+    password: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+    ],
+    checkcode: [
+        { required: true, message: '请输入验证码', trigger: 'blur' },
+    ],
+});
+const rules2 = {
+    userid: [
+        { required: true, message: '请输入北京大学邮箱账号', trigger: 'blur' },
+        {
+          type: 'email',
+          message: '请输入正确的邮箱地址',
+          trigger: ['blur', 'change'],
+        }],
+    emailcode: [
+        { required: true, message: '请输入验证码', trigger: 'blur' },
+    ],
+    password: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+    ],
+    username: [
+        { required: true, message: '请输入用户昵称', trigger: 'blur' },
+    ],
 
-})
+};
 
-// 重置表单中的特定字段
-function resetForm1() {
-    form1.userid = '';
-    form1.password = '';
-    form1.checkcode = '';
-}
-function resetForm2() {
-    form2.userid = '';
-    form2.password = '';
-    form2.emailcode = '';
-    form2.username = '';
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
 }
 
 onMounted(() => {
-  //getUserInfo();
-  console.log(sessionStorage.isLogin)
-
+    //console.log(sessionStorage.isLogin);
+    resetForm(loginFormRef.value);
+    resetForm(signupFormRef.value);
 });
 
-
-
-//登录按钮
-import { useStore } from 'vuex';
-
-const store = useStore();
-
-//向后端确认登录情况
 async function confirmLogin(id: string, password: string) {
     console.log(id, password);
     try {
@@ -121,63 +147,49 @@ async function confirmLogin(id: string, password: string) {
             },
             dataType: "json",
         });
-       // res=JSON.parse(res);
         if (res.login === 1) {
             console.log("登录成功");
-            // 处理登录成功的逻辑
             return true;
         } else {
             console.log("登录失败：", res.data);
-            // 处理登录失败的逻辑
             return false;
         }
     } catch (error) {
         console.error("请求异常：", error);
-        // 处理请求异常的逻辑
         return false;
     }
 }
+
 const onLogin = async () => {
-    console.log('login!')
-    if (form1.checkcode != identifyCode.value) {
-        ElMessage({
-            message: '验证码错误！',
-            grouping: true,
-            type: 'error',
-        })
-        refreshCode();
-        resetForm1();
-        resetForm2();
-    }
-
-    else {
-        const loginSuccess = await confirmLogin(form1.userid, form1.password);
-
-        if (loginSuccess) {
-            store.commit("isLogin", true)
-            const id=form1.userid;
-            store.commit("updateLoginUserInfo",{userId:id})
-            console.log(id)
-            sessionStorage.setItem('userId', id);
-            refreshCode();
-            resetForm1();
-            resetForm2();
-            sessionStorage.isLogin=true;
-            router.push('/index');
+    loginFormRef.value.validate(async (valid) => {
+        if (valid) {
+            const loginSuccess = await confirmLogin(loginForm.userid, loginForm.password);
+            if (loginSuccess) {
+                store.commit("isLogin", true);
+                const id = loginForm.userid;
+                store.commit("updateLoginUserInfo", { userId: id });
+                sessionStorage.setItem('userId', id);
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value)
+                sessionStorage.isLogin = true;
+                router.push('/index');
+            } else {
+                ElMessage({
+                    message: '请重新输入',
+                    grouping: true,
+                    type: 'error',
+                });
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value)
+            }
+        } else {
+            ElMessage.error('输入有问题失败');
         }
-        else {
-            ElMessage({
-                message: '请重新输入',
-                grouping: true,
-                type: 'error',
-            })
-            refreshCode();
-            resetForm1();
-            resetForm2();
-        }
-    }
-}
-//注册是与登录类似的处理
+    });
+};
+
 async function confirmSignup(id: string, password: string, username: string) {
     console.log(id, password);
     try {
@@ -186,11 +198,10 @@ async function confirmSignup(id: string, password: string, username: string) {
             params: {
                 userid: id,
                 userpassword: password,
-               // username: username,
+                username: username,
             },
             dataType: "json",
         });
-       // res=JSON.parse(res);
         if (res.signup === 1) {
             console.log("注册成功");
             return true;
@@ -203,33 +214,39 @@ async function confirmSignup(id: string, password: string, username: string) {
         return false;
     }
 }
+
 const onSignup = async () => {
-    console.log('sign up!')
-    const signupSuccess = await confirmSignup(form2.userid, form2.password, form2.username);
-    if (signupSuccess) {
-        refreshCode();
-        resetForm2();
-        ElMessage({
-            message: '注册成功',
-            grouping: true,
-            type: 'success',
-        })
-    }
-    else {
-        ElMessage({
-            message: '账号或密码错误，请重新输入',
-            grouping: true,
-            type: 'error',
-        })
-        refreshCode();
-        resetForm1();
-    }
-}
+    signupFormRef.value.validate(async (valid) => {
+        if (valid) {
+            const signupSuccess = await confirmSignup(signupForm.userid, signupForm.password, signupForm.username);
+            if (signupSuccess) {
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value)
+                ElMessage({
+                    message: '注册成功',
+                    grouping: true,
+                    type: 'success',
+                });
+            } else {
+                ElMessage({
+                    message: '账号或密码错误，请重新输入',
+                    grouping: true,
+                    type: 'error',
+                });
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value)
 
+            }
+        } else {
+            ElMessage.error('表单验证失败');
+        }
+    });
+};
 
-//验证码相关
-import checkcode from '@/components/Login/checkcode.vue'
-import { dataType } from 'element-plus/es/components/table-v2/src/common.mjs';
+import checkcode from '@/components/Login/checkcode.vue';
+
 const code = (Math.floor(Math.random() * 9000) + 1000).toString();
 const identifyCode = ref(code);
 const identifyCodes = ref("1234567890abcdefjhijklinopqrsduvwxyz");
@@ -237,16 +254,43 @@ const refreshCode = () => {
     identifyCode.value = "";
     makeCode(4);
 };
+
 const makeCode = (l: number) => {
     for (let i = 0; i < l; i++) {
         identifyCode.value += identifyCodes.value[randomNum(0, identifyCodes.value.length)];
     }
 };
+
 const randomNum = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min) + min);
 };
 
+const sendEmailCode = async () => {
+    // 发送邮箱验证码的逻辑
+    try {
+        const res = await axios.post('/api/sendEmailCode', {
+            email: signupForm.userid,
+        });
+        if (res.data.success) {
+            ElMessage({
+                message: '验证码已发送',
+                grouping: true,
+                type: 'success',
+            });
+        } else {
+            ElMessage({
+                message: '发送失败，请重试',
+                grouping: true,
+                type: 'error',
+            });
+        }
+    } catch (error) {
+        console.error("请求异常：", error);
+        ElMessage.error('发送验证码失败');
+    }
+};
 </script>
+
 <style scoped>
 html,
 body {
@@ -256,7 +300,6 @@ body {
     padding: 0;
     font-family: 'Arial', sans-serif;
     background-color: rgba(0, 0, 0, 0.5);
-    /* 半透明背景，以便背景图片可见 */
 }
 
 .login {
@@ -276,22 +319,16 @@ body {
 
 .login-logo img {
     width: 200px;
-    /* 调整logo大小 */
     height: auto;
 }
 
 .login-item {
     background-color: rgba(255, 255, 255, 0.9);
-    /* 半透明背景 */
     border-radius: 10px;
-    /* 圆角边框 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* 添加阴影 */
     padding: 30px;
-    /* 内边距 */
     width: 100%;
     max-width: 420px;
-    /* 最大宽度 */
     height: auto;
     position: absolute;
     top: 50%;
@@ -306,7 +343,6 @@ body {
 .el-form {
     max-width: 600px;
     margin: 0 auto;
-    /* 居中表单 */
 }
 
 .el-form-item {
@@ -317,42 +353,31 @@ body {
 
 .el-input__inner {
     border-radius: 5px;
-    /* 输入框圆角 */
     border: 1px solid #dcdfe6;
-    /* 输入框边框颜色 */
 }
 
 .el-input__inner:focus {
     border-color: #409eff;
-    /* 输入框聚焦时的边框颜色 */
 }
 
 .el-button {
     width: 100%;
     display: block;
-    /* 使按钮表现为块级元素 */
     margin-left: auto;
     margin-right: auto;
     border-radius: 5px;
-    /* 按钮圆角 */
     background-color: #409eff;
-    /* 按钮背景颜色 */
     border-color: #409eff;
-    /* 按钮边框颜色 */
 }
 
 .el-button:hover {
     background-color: #66b1ff;
-    /* 按钮悬浮时的背景颜色 */
     border-color: #66b1ff;
-    /* 按钮悬浮时的边框颜色 */
 }
 
 .el-button:focus {
     background-color: #409eff;
-    /* 按钮聚焦时的背景颜色 */
     border-color: #409eff;
-    /* 按钮聚焦时的边框颜色 */
 }
 
 .code-btn {
