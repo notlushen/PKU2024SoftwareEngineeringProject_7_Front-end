@@ -1,25 +1,55 @@
 <template>
     <div class="question">
-        <p>这是question页面</p>
+    <el-col :span="12" class="sidebar">
+      <el-menu
+        default-active="2"
+        class="el-menu-vertical-demo"
+        @open="handleOpen"
+        @close="handleClose"
+      >
+        <el-sub-menu index="1">
+          <template #title>
+            <el-icon><location /></el-icon>
+            <span>Navigator One</span>
+          </template>
+          <el-menu-item-group title="Group One">
+            <el-menu-item index="1-1">item one</el-menu-item>
+            <el-menu-item index="1-2">item two</el-menu-item>
+          </el-menu-item-group>
+          <el-menu-item-group title="Group Two">
+            <el-menu-item index="1-3">item three</el-menu-item>
+          </el-menu-item-group>
+          <el-sub-menu index="1-4">
+            <template #title>item four</template>
+            <el-menu-item index="1-4-1">item one</el-menu-item>
+          </el-sub-menu>
+        </el-sub-menu>
+        <el-menu-item index="2">
+          <el-icon><icon-menu /></el-icon>
+          <span>Navigator Two</span>
+        </el-menu-item>
+        <el-menu-item index="3" disabled>
+          <el-icon><document /></el-icon>
+          <span>Navigator Three</span>
+        </el-menu-item>
+        <el-menu-item index="4">
+          <el-icon><setting /></el-icon>
+          <span>Navigator Four</span>
+        </el-menu-item>
+      </el-menu>
+    </el-col>
     </div>
   </template>
   
   <script setup name="Question">
   import { ref, onMounted } from 'vue';
 
-  // 可以在setup函数中执行组件的初始化逻辑
-  onMounted(() => {
-    console.log('Home component is mounted');
-  });
+
   </script>
   
   <style scoped>
-  .home {
-    display: flex;
-    justify-content: center; 
-    width: 100%; }
-  
-  .container {
+
+  .question {
     display: flex;
 
     width: 100%;
@@ -29,9 +59,11 @@
     flex: 1;
     padding: 0 20px;
   }
-  
+  .sidebar{
+    width: 100%;
+  }
   @media (max-width: 768px) {
-    .container {
+    .question {
       flex-direction: column;
     }
   }

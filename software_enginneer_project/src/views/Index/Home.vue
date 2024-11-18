@@ -8,10 +8,6 @@
   import { ref, onMounted } from 'vue';
   import Postlist from '@/components/Postlist.vue';
   
-  // 可以在setup函数中执行组件的初始化逻辑
-  onMounted(() => {
-    console.log('Home component is mounted');
-  });
   </script>
   
 <style scoped >

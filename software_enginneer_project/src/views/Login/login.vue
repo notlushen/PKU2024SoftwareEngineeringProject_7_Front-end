@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive , onMounted} from 'vue'
 import { useRouter } from 'vue-router';
 import type { TabsPaneContext } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -96,22 +96,33 @@ function resetForm2() {
     form2.username = '';
 }
 
+onMounted(() => {
+  //getUserInfo();
+  console.log(sessionStorage.isLogin)
+
+});
+
+
 
 //登录按钮
+import { useStore } from 'vuex';
+
+const store = useStore();
 
 //向后端确认登录情况
 async function confirmLogin(id: string, password: string) {
     console.log(id, password);
     try {
         let res = await Request({
-            url: '/login',
+            url: '/api/login',
             params: {
-                id: id,
-                password: password,
+                userid: id,
+                userpassword: password,
             },
             dataType: "json",
         });
-        if (res === "验证成功！") {
+       // res=JSON.parse(res);
+        if (res.login === 1) {
             console.log("登录成功");
             // 处理登录成功的逻辑
             return true;
@@ -136,24 +147,33 @@ const onLogin = async () => {
         })
         refreshCode();
         resetForm1();
+        resetForm2();
     }
+
     else {
         const loginSuccess = await confirmLogin(form1.userid, form1.password);
 
         if (loginSuccess) {
+            store.commit("isLogin", true)
+            const id=form1.userid;
+            store.commit("updateLoginUserInfo",{userId:id})
+            console.log(id)
+            sessionStorage.setItem('userId', id);
             refreshCode();
             resetForm1();
-            
+            resetForm2();
+            sessionStorage.isLogin=true;
             router.push('/index');
         }
         else {
             ElMessage({
-                message: '账号或密码错误，请重新输入',
+                message: '请重新输入',
                 grouping: true,
                 type: 'error',
             })
             refreshCode();
             resetForm1();
+            resetForm2();
         }
     }
 }
@@ -162,27 +182,24 @@ async function confirmSignup(id: string, password: string, username: string) {
     console.log(id, password);
     try {
         let res = await Request({
-            url: '/signup',
+            url: '/api/signup',
             params: {
-                id: id,
-                password: password,
-                username: username,
+                userid: id,
+                userpassword: password,
+               // username: username,
             },
             dataType: "json",
         });
-        console.log(res);
-        if (res === "成功！") {
-            console.log("登录成功");
-            // 处理登录成功的逻辑
+       // res=JSON.parse(res);
+        if (res.signup === 1) {
+            console.log("注册成功");
             return true;
         } else {
             console.log("注册失败：", res.data);
-            // 处理登录失败的逻辑
             return false;
         }
     } catch (error) {
         console.error("请求异常：", error);
-        // 处理请求异常的逻辑
         return false;
     }
 }
@@ -195,7 +212,7 @@ const onSignup = async () => {
         ElMessage({
             message: '注册成功',
             grouping: true,
-            type: 'error',
+            type: 'success',
         })
     }
     else {

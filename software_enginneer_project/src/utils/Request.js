@@ -8,7 +8,6 @@ const instance = axios.create({
     baseURL: "/api",
     timeout: 10 * 1000,
 });
-
 let loading = null;
 instance.interceptors.request.use(
     (config) => {
@@ -34,13 +33,13 @@ instance.interceptors.response.use(
         if (showLoading && loading) {
             loading.close();
         }
-        console.log(response);
         const responseData = response.data;
         if (response.status == 200) {
-            console.log("ok");
             return responseData;
         }
         else if (responseData.status == 901) {
+            store.commit("isLogin", false);
+            store.commit("updateLo  ginUserInfo", null);
             return Promise.reject({ showError: false, msg: "登录超时" });
         }
         else {
@@ -51,20 +50,19 @@ instance.interceptors.response.use(
         }
 
     }, (error) => {
-        console.log("error")
-        loading.close();
-
+        if (error.config.showLoading && loading) {
+            loading.close();
+        }
+        return Promise.reject({ showError: true, msg: "网络异常" });
     }
 );
 
-
 const request = (config) => {
-    let { url, params, dataType, showLoading = true, errorCallback, showError = true } = config;
-    dataType = dataType ? dataType : "form";
+    let { url, params, dataType, errorCallback,showLoading = true, showError = true } = config;
+    dataType = dataType ? dataType : "json";
 
     let contentType = contentTypeForm;
     let data = params;
-    console.log(dataType)
 
     if (dataType == "json") {
         contentType = contentTypeJson;
@@ -77,12 +75,14 @@ const request = (config) => {
             data.append(key, params[key] == undefined ? "" : params[key]);
         }
     }
-    console.log(contentType)
     let headers = {
         'Content-Type': contentType,
         'X-Requested-With': 'XMLHttpRequest',
     };
-    return instance.post(url, data, {
+    return instance.post(
+        url, 
+        data, 
+        {
         headers: headers,
         showLoading: showLoading,
         errorCallback: errorCallback,

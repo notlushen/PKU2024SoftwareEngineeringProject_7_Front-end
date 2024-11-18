@@ -8,15 +8,15 @@
       <!--搜索框-->
       <div class="header-search">
         <el-input v-model="formInline.content" type="search" placeholder="搜索问题..." class="search-input" />
-        <el-button type="primary" round>
+        <el-button type="primary" round @click="handleSearch">
           搜索
         </el-button>
-        <el-button type="primary" round>
-          发帖
+        <el-button type="primary" round @click="createQuestion">
+          提问
         </el-button>
       </div>
       <!--用户信息-->
-      <div v-if="userInfo.userId">
+      <div  class="user" v-if="userInfo.userId">
         <el-dropdown>
           <span class="el-dropdown-link">
             {{ userInfo.userId }}
@@ -24,7 +24,7 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>个人中心</el-dropdown-item>
-              <el-dropdown-item divided>退出登录</el-dropdown-item>
+              <el-dropdown-item divided @click="quit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -48,6 +48,7 @@ import { ElMenu, ElMenuItem, ElInput, ElButton } from 'element-plus';
 import { onMounted, reactive, ref, watch } from 'vue';
 import MyMenu from './MyMenu.vue';
 import { ArrowDown } from '@element-plus/icons-vue'
+import Message from '@/utils/Message'
 
 const router = useRouter();
 const formInline = reactive({
@@ -67,12 +68,20 @@ const login = () => {
 const handleSearch = (event) => {
   // 您可以在这里添加搜索逻辑，例如使用Vue的路由或调用API
   console.log('搜索被触发');
+  console.log(userInfo.userId)
+
 };
 import { useStore } from 'vuex';
 const store = useStore();
 const userInfo = ref({});
 onMounted(() => {
-  getUserInfo();
+  //getUserInfo();
+  console.log(sessionStorage.isLogin)
+
+  console.log(sessionStorage.userId)
+  userInfo.value.userId=sessionStorage.userId
+  console.log(userInfo.value.userId)
+
 });
 
 const getUserInfo = async () => {
@@ -90,18 +99,32 @@ const getUserInfo = async () => {
   store.commit("updateLoginUserInfo", res.data)
 }
 
-watch(
+watch( 
   () => store.state.loginUserInfo,
+  
   (newVal, oldVal) => {
     if (newVal != undefined && newVal != null) {
-      userInfo.value = newVal;
+     // userInfo.value = newVal;
     }
     else {
-      userInfo = {};
+     // userInfo = {};
     }
   }
 
 );
+const quit=()=>{
+  router.push('/login')
+}
+//提问模块
+const createQuestion=()=>{
+  if(!sessionStorage.userId){
+    Message.warning("请先登录！")
+  }
+  else{
+    router.push('/editQuestion')
+  }
+}
+
 </script>
 
 <style scoped>
@@ -126,9 +149,9 @@ watch(
 
 .user {
   position: relative;
-  right: 0px;
   display: flex;
   align-items: center;
+  min-width:10%;
 
 }
 

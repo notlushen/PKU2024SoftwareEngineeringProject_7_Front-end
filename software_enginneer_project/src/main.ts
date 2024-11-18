@@ -11,6 +11,7 @@ import Request from '@/utils/Request'
 import store from "@/store"
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import Dialog from '@/components/Dialog.vue'
+import EditMarkdown from '@/components/editMarkdown.vue'
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
@@ -24,4 +25,6 @@ app.config.globalProperties.globalInfo={
 app.config.globalProperties.Message=Message;
 app.config.globalProperties.Request=Request;
 app.component("Dialog",Dialog)
+
+app.component("EditMarkdown",Dialog)
 app.mount('#app')

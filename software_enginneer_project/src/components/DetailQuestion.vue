@@ -1,10 +1,14 @@
 <template>
-    <div class="post-item" @click="goDetails">
+    <div class="post-item">
       <div class="post-title">
         <span>#{{post.id  }}</span>
         {{ post.title }}
       </div>
       <div class="post-content">{{ post.content }}</div>
+      <div class="operation">
+        <button>点赞</button>
+        <button>关注</button>
+      </div>
     </div>
   </template>
   
