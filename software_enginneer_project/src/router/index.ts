@@ -66,17 +66,17 @@ const router = createRouter({
   routes,
 });
 
-  router.beforeEach((to,from,next)=>{
-    const isLogin = sessionStorage.getItem('isLogin')==='true';
-    console.log(  (isLogin||(to.name==="login")));
+  // router.beforeEach((to,from,next)=>{
+  //   const isLogin = sessionStorage.getItem('isLogin')==='true';
+  //   console.log(  (isLogin||(to.name==="login")));
 
-    if(isLogin||(to.name==='login')){
-      console.log("notmylogin");
-      next();
-    }
-    else{
-      console.log("mylogin");
-      next('/login');
-    }
-  })
+  //   if(isLogin||(to.name==='login')){
+  //     console.log("notmylogin");
+  //     next();
+  //   }
+  //   else{
+  //     console.log("mylogin");
+  //     next('/login');
+  //   }
+  // })
 export default router;

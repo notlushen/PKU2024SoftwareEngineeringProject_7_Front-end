@@ -1,6 +1,8 @@
 <template>
     <div class="question">
-        <PostItem  :post="post" />
+        <DetailQuestion  :post="post" />
+        <DetailAnswer  :post="post" />
+
     </div>
     <div class="answer">
         
@@ -9,7 +11,9 @@
 
 <script setup lang="ts">
   import { ref } from 'vue';
-  import PostItem from '@/components/DetailQuestion.vue';
+  import DetailQuestion from '@/components/DetailQuestion.vue';
+  import DetailAnswer from '@/components/DetailAnswer.vue';
+
   const post = ref(
     { id: 22, title: '软件工程应该怎么学', content: '软件工程是一门好课。' },
   );
