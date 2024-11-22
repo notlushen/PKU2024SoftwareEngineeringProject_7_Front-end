@@ -40,6 +40,13 @@ const routes = [
         component: () => import('../views/details/details.vue'),
         children: []
       },
+      {
+        path: '/inform',
+        name: 'inform',
+        component: () => import('../views/Index/Inform.vue'),
+        children: []
+      },
+
     ]
   },
 
