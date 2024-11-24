@@ -13,7 +13,7 @@
   defineProps({
     post: Object
   });
-  const router=useRouter();
+const router=useRouter();
 function goDetails(v) {
   router.push('/detail');
 }

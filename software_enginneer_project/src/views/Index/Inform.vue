@@ -5,10 +5,9 @@
       </div>
       <div class="detail">
         <div class= "de-block">
-            
         </div>
         <div class="name">
-          <p class="na-name">我不是陆神</p>
+          <p class="na-name">{{username}}</p>
           <el-button @clicked="editname">编辑个人资料</el-button>
           <!-- 这里需要实现改昵称，加一个输入框 -->
         </div>
@@ -28,8 +27,13 @@
   </template>
   
   
-  <script lang="ts">
+  <script lang="ts" setup>
   import type { TabsPaneContext } from 'element-plus'
+  import { ref } from 'vue';
+const username="我不是陆神";
+const editname=()=>{
+  
+}
   </script>
   
   <style scoped>

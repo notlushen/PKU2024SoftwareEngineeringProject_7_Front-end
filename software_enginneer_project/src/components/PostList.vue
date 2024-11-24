@@ -5,9 +5,26 @@
     </div>
   </template>
   
-  <script setup>
+  <script setup lang="ts">
   import { ref } from 'vue';
   import PostItem from '@/components/PostItem.vue';
+  import Request from '@/utils/Request.js';
+
+  async function confirmLogin() {
+    try {
+        let res = await Request({
+            url: '/api/post',
+            params: {
+            },
+            dataType: "json",
+        });
+        
+    } catch (error) {
+        console.error("请求异常：", error);
+        return false;
+    }
+}
+
   const posts = ref([
     { id: 22, title: '软件工程应该怎么学', content: '软件工程是一门好课。' },
     { id: 2, title: '敏捷开发流程中最需要注意什么', content: '敏捷开发流程中最需要注意什么？' },
