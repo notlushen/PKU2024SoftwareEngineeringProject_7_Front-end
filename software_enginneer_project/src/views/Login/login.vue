@@ -46,6 +46,28 @@
                     </el-form>
                     <el-button type="primary" @click="onSignup">注册</el-button>
                 </el-tab-pane>
+                <el-tab-pane label="找回密码" name="third">
+                    <el-form :model="signupForm2" :rules="rules2" ref="signupFormRef" label-width="auto" style="max-width: 600px">
+                        <el-form-item label="北京大学邮箱账号" prop="userid">
+                            <el-input v-model="signupForm2.userid" />
+                        </el-form-item>
+
+                        <el-form-item label="验证码" prop="emailcheckcode">
+                            <div class="code-btn">
+                                <el-input v-model="signupForm2.emailcheckcode" maxlength="6" />
+                                <el-link type="primary" @click="sendEmailCode">获得验证码</el-link>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="重置密码" prop="password">
+                            <el-input v-model="signupForm2.password" type="password" show-password />
+                        </el-form-item>
+                        <!-- <el-form-item label="用户昵称" prop="username">
+                            <el-input v-model="signupForm.username" />
+                        </el-form-item> -->
+
+                    </el-form>
+                    <el-button type="primary" @click="" disabled>找回密码</el-button>
+                </el-tab-pane>
             </el-tabs>
         </div>
     </div>
@@ -58,8 +80,7 @@ import { useStore } from 'vuex';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Request from '@/utils/Request.js';
 import axios from 'axios';
-import type { FormInstance } from 'element-plus'
-import type {  FormRules } from 'element-plus'
+import type { FormInstance,FormRules } from 'element-plus'
 const router = useRouter();
 const store = useStore();
 interface RuleForm {
@@ -83,6 +104,13 @@ const loginFormRef = ref<FormInstance>()
 const signupFormRef = ref<FormInstance>()
 
 const signupForm = reactive({
+    userid: '',
+    username: '',
+    password: '',
+    emailcheckcode: '',
+    checkcode: '',
+});
+const signupForm2 = reactive({
     userid: '',
     username: '',
     password: '',
@@ -133,13 +161,13 @@ onMounted(() => {
 
 });
 
-async function confirmLogin(id: string, password: string) {
-    console.log(id, password);
+async function confirmLogin(email: string, password: string) {
+    console.log(email, password);
     try {
         let res = await Request({
             url: '/api/login',
             params: {
-                userid: id,
+                email: email,
                 userpassword: password,
             },
             dataType: "json",
@@ -164,8 +192,14 @@ const onLogin = async () => {
             if (loginSuccess) {
                 store.commit("isLogin", true);
                 const id = loginForm.userid;
+                const password=loginForm.password
                 store.commit("updateLoginUserInfo", { userId: id });
-                sessionStorage.setItem('userId', id);
+
+                sessionStorage.setItem('email', id);
+                sessionStorage.setItem('userPassword', password);
+                sessionStorage.isLogin = true;
+
+                
                 refreshCode();
                 resetForm(loginFormRef.value);
                 resetForm(signupFormRef.value)
@@ -174,7 +208,7 @@ const onLogin = async () => {
                     grouping: true,
                     type: 'success',
                 });
-                sessionStorage.isLogin = true;
+
                 router.push('/index');
             } else {
                 ElMessage({

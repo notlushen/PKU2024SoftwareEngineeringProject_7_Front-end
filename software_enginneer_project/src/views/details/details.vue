@@ -1,8 +1,6 @@
 <template>
     <div class="question">
-        <DetailQuestion  :post="post" />
-        <DetailAnswer  :post="post" />
-
+        <DetailAnswer />
     </div>
     <div class="answer">
         

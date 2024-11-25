@@ -35,7 +35,7 @@ const routes = [
         children: []
       },
       {
-        path: '/detail',
+        path: '/detail/:questionId',
         name: 'detail',
         component: () => import('../views/details/details.vue'),
         children: []

@@ -1,6 +1,6 @@
 <template>
     <div class="question">
-    <el-col :span="12" class="sidebar">
+    <el-col :span=4 class="sidebar">
       <el-menu
         default-active="2"
         class="el-menu-vertical-demo"
@@ -9,8 +9,8 @@
       >
         <el-sub-menu index="1">
           <template #title>
-            <el-icon><location /></el-icon>
-            <span>Navigator One</span>
+            <el-icon><document /></el-icon>
+            <span>专业课</span>
           </template>
           <el-menu-item-group title="Group One">
             <el-menu-item index="1-1">item one</el-menu-item>
@@ -25,20 +25,21 @@
           </el-sub-menu>
         </el-sub-menu>
         <el-menu-item index="2">
-          <el-icon><icon-menu /></el-icon>
-          <span>Navigator Two</span>
-        </el-menu-item>
-        <el-menu-item index="3" disabled>
           <el-icon><document /></el-icon>
-          <span>Navigator Three</span>
+          <span>通识课</span>
+        </el-menu-item>
+        <el-menu-item index="3">
+          <el-icon><document /></el-icon>
+          <span>公选课</span>
         </el-menu-item>
         <el-menu-item index="4">
-          <el-icon><setting /></el-icon>
-          <span>Navigator Four</span>
+          <el-icon><document /></el-icon>
+          <span>其他课程</span>
         </el-menu-item>
       </el-menu>
     </el-col>
     </div>
+
   </template>
   
   <script setup name="Question">

@@ -23,7 +23,7 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item @click="enterInform">个人中心</el-dropdown-item>
               <el-dropdown-item divided @click="quit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -79,7 +79,7 @@ onMounted(() => {
   console.log(sessionStorage.isLogin)
 
   console.log(sessionStorage.userId)
-  userInfo.value.userId=sessionStorage.userId
+  userInfo.value.userId=sessionStorage.email
   console.log(userInfo.value.userId)
 
 });
@@ -112,12 +112,15 @@ watch(
   }
 
 );
+const enterInform=()=>{
+  router.push('/inform')
+}
 const quit=()=>{
   router.push('/login')
 }
 //提问模块
 const createQuestion=()=>{
-  if(!sessionStorage.userId){
+  if(!sessionStorage.isLogin){
     Message.warning("请先登录！")
   }
   else{

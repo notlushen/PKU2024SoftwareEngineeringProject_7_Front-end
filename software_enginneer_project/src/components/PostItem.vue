@@ -1,10 +1,14 @@
 <template>
     <div class="post-item" @click="goDetails">
       <div class="post-title">
-        <span>#{{post.id  }}</span>
+        <router-link :to="`/detail/${post.id}`">#{{post.id}}          </router-link>
+        <span>   --- </span>
+        <router-link :to="`/detail/${post.id}`">
         {{ post.title }}
+      </router-link>
       </div>
-      <div class="post-content">{{ post.content }}</div>
+      <div class="post-content">{{ post.body }}</div>
+      <div class="post-time">{{ post.created_at }}</div>
     </div>
   </template>
   
@@ -13,10 +17,9 @@
   defineProps({
     post: Object
   });
+
 const router=useRouter();
-function goDetails(v) {
-  router.push('/detail');
-}
+
   </script>
   
   <style scoped>

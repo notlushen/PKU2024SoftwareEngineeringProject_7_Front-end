@@ -14,7 +14,6 @@ import "@kangc/v-md-editor/lib/theme/style/github.css"
 import githubTheme from "@kangc/v-md-editor/lib/theme/github.js"
 import { getCurrentInstance } from 'vue';
 import hljs from 'highlight.js';
-const{proxy}=getCurrentInstance();
 VMdEditor.use(githubTheme,{
     Hljs:hljs,
 });

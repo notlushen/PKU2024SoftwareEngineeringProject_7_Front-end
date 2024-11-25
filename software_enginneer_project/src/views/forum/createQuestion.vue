@@ -9,7 +9,7 @@
                     </div>
 
                 <el-card>问题正文</el-card>
-                <EditMarkdown :model-value="form1.content"></EditMarkdown>
+                <EditMarkdown v-model="form1.content"></EditMarkdown>
                 <el-form-item>
                     <el-button type="primary" @click="submit">发布</el-button>
                 </el-form-item>
@@ -21,13 +21,43 @@
 <script setup lang="ts">
 import EditMarkdown from '@/components/editMarkdown.vue';
 import { reactive } from 'vue';
+import Request from '@/utils/Request.js';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import router from '@/router';
+
 const form1 = reactive({
     title: '',
     content: '',
 
 })
-const submit=()=>{
-    console.log(form1);
+const submit=async()=>{
+    try {
+        let res = await Request({
+            url: '/api/createquestion',
+            params: {
+                title:form1.title,
+                body:form1.content,
+                email:sessionStorage.getItem("email")
+            },
+            dataType: "json",
+        });
+        if (res.code === 200) {
+            ElMessage({
+                    message: '发布成功',
+                    grouping: true,
+                    type: 'success',
+                });
+                router.push("/index")
+        } else {
+            ElMessage({
+                    message: '发布失败',
+                    grouping: true,
+                    type: 'error',
+                });
+        }
+    } catch (error) {
+    }
+
 }
 </script>
 

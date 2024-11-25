@@ -1,6 +1,5 @@
 <template>
   <el-config-provider :message="config" :locale="locale">
-
     <div id="app">
       <router-view></router-view>
     </div>
@@ -14,7 +13,6 @@ const locale = zhCn;
 
 import { RouterView, RouterLink } from 'vue-router';
 import { reactive } from 'vue'
-import { ElMessage } from 'element-plus'
 const config = reactive({
   max: 3,
   autoInsertSpace: true,
