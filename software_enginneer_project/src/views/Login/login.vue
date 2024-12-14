@@ -7,7 +7,8 @@
             <el-tabs v-model="activeName" class="demo-tabs">
                 <el-tab-pane label="登录" name="first">
 
-                    <el-form :model="loginForm" :rules="rules1" ref="loginFormRef" label-width="auto" style="max-width: 600px">
+                    <el-form :model="loginForm" :rules="rules1" ref="loginFormRef" label-width="auto"
+                        style="max-width: 600px">
                         <el-form-item label="北大邮箱账号" prop="userid">
                             <el-input v-model="loginForm.userid" placeholder="请输入北大邮箱账号" />
                         </el-form-item>
@@ -25,7 +26,8 @@
                     </el-form>
                 </el-tab-pane>
                 <el-tab-pane label="注册" name="second">
-                    <el-form :model="signupForm" :rules="rules2" ref="signupFormRef" label-width="auto" style="max-width: 600px">
+                    <el-form :model="signupForm" :rules="rules2" ref="signupFormRef" label-width="auto"
+                        style="max-width: 600px">
                         <el-form-item label="北京大学邮箱账号" prop="userid">
                             <el-input v-model="signupForm.userid" />
                         </el-form-item>
@@ -39,31 +41,29 @@
                         <el-form-item label="密码" prop="password">
                             <el-input v-model="signupForm.password" type="password" show-password />
                         </el-form-item>
-                        <!-- <el-form-item label="用户昵称" prop="username">
+                        <el-form-item label="用户昵称" prop="username">
                             <el-input v-model="signupForm.username" />
-                        </el-form-item> -->
+                        </el-form-item>
 
                     </el-form>
                     <el-button type="primary" @click="onSignup">注册</el-button>
                 </el-tab-pane>
                 <el-tab-pane label="找回密码" name="third">
-                    <el-form :model="signupForm2" :rules="rules2" ref="signupFormRef" label-width="auto" style="max-width: 600px">
+                    <el-form :model="resetPasswordForm" :rules="rules2" ref="signupFormRef" label-width="auto"
+                        style="max-width: 600px">
                         <el-form-item label="北京大学邮箱账号" prop="userid">
-                            <el-input v-model="signupForm2.userid" />
+                            <el-input v-model="resetPasswordForm.userid" />
                         </el-form-item>
 
                         <el-form-item label="验证码" prop="emailcheckcode">
                             <div class="code-btn">
-                                <el-input v-model="signupForm2.emailcheckcode" maxlength="6" />
+                                <el-input v-model="resetPasswordForm.emailcheckcode" maxlength="6" />
                                 <el-link type="primary" @click="sendEmailCode">获得验证码</el-link>
                             </div>
                         </el-form-item>
                         <el-form-item label="重置密码" prop="password">
-                            <el-input v-model="signupForm2.password" type="password" show-password />
+                            <el-input v-model="resetPasswordForm.password" type="password" show-password />
                         </el-form-item>
-                        <!-- <el-form-item label="用户昵称" prop="username">
-                            <el-input v-model="signupForm.username" />
-                        </el-form-item> -->
 
                     </el-form>
                     <el-button type="primary" @click="" disabled>找回密码</el-button>
@@ -80,14 +80,14 @@ import { useStore } from 'vuex';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Request from '@/utils/Request.js';
 import axios from 'axios';
-import type { FormInstance,FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 const router = useRouter();
 const store = useStore();
 interface RuleForm {
     userid: string
     password: string
     checkcode: string
-    emailcheckcode:string,
+    emailcheckcode: string,
     username: string,
 }
 
@@ -100,8 +100,8 @@ const loginForm = reactive<RuleForm>({
     emailcheckcode: '',
     username: '',
 });
-const loginFormRef = ref<FormInstance>()
-const signupFormRef = ref<FormInstance>()
+const loginFormRef = ref<FormInstance>();
+const signupFormRef = ref<FormInstance>();
 
 const signupForm = reactive({
     userid: '',
@@ -110,7 +110,7 @@ const signupForm = reactive({
     emailcheckcode: '',
     checkcode: '',
 });
-const signupForm2 = reactive({
+const resetPasswordForm = reactive({
     userid: '',
     username: '',
     password: '',
@@ -121,9 +121,9 @@ const rules1 = reactive<FormRules<RuleForm>>({
     userid: [
         { required: true, message: '请输入账号', trigger: 'blur' },
         {
-          type: 'email',
-          message: '请输入正确的邮箱地址',
-          trigger: ['blur', 'change'],
+            type: 'email',
+            message: '请输入正确的邮箱地址',
+            trigger: ['blur', 'change'],
         },
     ],
     password: [
@@ -137,9 +137,9 @@ const rules2 = {
     userid: [
         { required: true, message: '请输入北京大学邮箱账号', trigger: 'blur' },
         {
-          type: 'email',
-          message: '请输入正确的邮箱地址',
-          trigger: ['blur', 'change'],
+            type: 'email',
+            message: '请输入正确的邮箱地址',
+            trigger: ['blur', 'change'],
         }],
     emailcheckcode: [
         { required: true, message: '请输入验证码', trigger: 'blur' },
@@ -153,14 +153,14 @@ const rules2 = {
 
 };
 const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  formEl.resetFields()
+    if (!formEl) return
+    formEl.resetFields()
 }
 onMounted(() => {
-    //console.log(sessionStorage.isLogin);
-
 });
 
+
+//confirmLogin：返回一个boolean，取决于发送请求后收到的代码
 async function confirmLogin(email: string, password: string) {
     console.log(email, password);
     try {
@@ -184,7 +184,7 @@ async function confirmLogin(email: string, password: string) {
         return false;
     }
 }
-
+//onLogin：登录按钮逻辑实现
 const onLogin = async () => {
     loginFormRef.value.validate(async (valid) => {
         if (valid) {
@@ -192,14 +192,14 @@ const onLogin = async () => {
             if (loginSuccess) {
                 store.commit("isLogin", true);
                 const id = loginForm.userid;
-                const password=loginForm.password
+                const password = loginForm.password
                 store.commit("updateLoginUserInfo", { userId: id });
 
                 sessionStorage.setItem('email', id);
                 sessionStorage.setItem('userPassword', password);
                 sessionStorage.isLogin = true;
 
-                
+
                 refreshCode();
                 resetForm(loginFormRef.value);
                 resetForm(signupFormRef.value)
@@ -226,7 +226,8 @@ const onLogin = async () => {
     });
 };
 
-async function confirmSignup(id: string, password: string, emailcheckcode: string) {
+//注册相关逻辑，与login相似
+async function confirmSignup(id: string, password: string, emailCheckcode: string, username: string) {
     console.log(id, password);
     try {
         let res = await Request({
@@ -234,7 +235,8 @@ async function confirmSignup(id: string, password: string, emailcheckcode: strin
             params: {
                 userid: id,
                 userpassword: password,
-                emailcheckcode: emailcheckcode,
+                emailcheckcode: emailCheckcode,
+                username: username,
             },
             dataType: "json",
         });
@@ -250,11 +252,10 @@ async function confirmSignup(id: string, password: string, emailcheckcode: strin
         return false;
     }
 }
-
 const onSignup = async () => {
     signupFormRef.value.validate(async (valid) => {
         if (valid) {
-            const signupSuccess = await confirmSignup(signupForm.userid, signupForm.password, signupForm.emailcheckcode);
+            const signupSuccess = await confirmSignup(signupForm.userid, signupForm.password, signupForm.emailcheckcode, signupForm.username);
             if (signupSuccess) {
                 refreshCode();
                 resetForm(loginFormRef.value);
@@ -280,7 +281,10 @@ const onSignup = async () => {
         }
     });
 };
-//随机验证码
+
+
+
+//随机验证码相关代码(从网上抄的,原文链接：https://blog.csdn.net/jingruoannan/article/details/128163246)
 import checkcode from '@/components/Login/checkcode.vue';
 
 const code = (Math.floor(Math.random() * 9000) + 1000).toString();
@@ -310,7 +314,7 @@ const sendEmailCode = async () => {
             },
             dataType: "json",
         });
-        if (res.confirm==1) {
+        if (res.confirm == 1) {
             ElMessage({
                 message: '验证码已发送',
                 grouping: true,

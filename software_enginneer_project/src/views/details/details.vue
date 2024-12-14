@@ -1,23 +1,21 @@
 <template>
-    <div class="question">
-        <DetailAnswer />
-    </div>
-    <div class="answer">
-        
-    </div>
+  <div class="question">
+    <DetailAnswer />
+  </div>
+  <div class="answer">
+
+  </div>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import DetailQuestion from '@/components/DetailQuestion.vue';
-  import DetailAnswer from '@/components/DetailAnswer.vue';
+import { ref } from 'vue';
+import DetailQuestion from '@/components/DetailQuestion.vue';
+import DetailAnswer from '@/components/DetailAnswer.vue';
 
-  const post = ref(
-    { id: 22, title: '软件工程应该怎么学', content: '软件工程是一门好课。' },
-  );
+const post = ref(
+  { id: 22, title: '软件工程应该怎么学', content: '软件工程是一门好课。' },
+);
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
