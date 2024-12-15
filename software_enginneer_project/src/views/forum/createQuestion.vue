@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import EditMarkdown from '@/components/editMarkdown.vue';
+import EditMarkdown from '@/components/EditMarkdown.vue';
 import { reactive } from 'vue';
 import Request from '@/utils/Request.js';
 import { ElMessage, ElMessageBox } from 'element-plus';

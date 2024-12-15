@@ -202,7 +202,7 @@ function likeAnswer(answer) {
   answer.likes++;
 }
 
-import EditMarkdown from '@/components/editMarkdown.vue';
+import EditMarkdown from '@/components/EditMarkdown.vue';
 import Dialog from '@/components/Dialog.vue';
 import { reactive } from 'vue';
 const form1 = reactive({

@@ -285,7 +285,7 @@ const onSignup = async () => {
 
 
 //随机验证码相关代码(从网上抄的,原文链接：https://blog.csdn.net/jingruoannan/article/details/128163246)
-import checkcode from '@/components/Login/checkcode.vue';
+import checkcode from '@/components/Login/Checkcode.vue';
 
 const code = (Math.floor(Math.random() * 9000) + 1000).toString();
 const identifyCode = ref(code);
