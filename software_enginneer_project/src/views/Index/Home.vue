@@ -32,9 +32,9 @@ onMounted(async () => {
   }
 })
 const posts = ref([
-  { id: 22, title: '软件工程应该怎么学', content: '软件工程是一门好课。' },
-  { id: 2, title: '敏捷开发流程中最需要注意什么', content: '敏捷开发流程中最需要注意什么？' },
-  { id: 3, title: 'Node.js 实战', content: 'Node.js 是一个基于Chrome V8引擎的JavaScript运行环境...' },
+  { id: 22, title: '软件工程应该怎么学', body: '软件工程是一门好课。' ,creater:'用户1'},
+  { id: 2, title: '敏捷开发流程中最需要注意什么', body: '敏捷开发流程中最需要注意什么？',creater:'用户1'} ,
+  { id: 3, title: 'Node.js 实战', body: 'Node.js 是一个基于Chrome V8引擎的JavaScript运行环境...',creater:'用户1'} ,
 ]);
 </script>
 

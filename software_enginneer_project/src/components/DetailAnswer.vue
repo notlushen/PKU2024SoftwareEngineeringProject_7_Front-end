@@ -14,17 +14,17 @@
         </el-col>
       </el-row>
       <el-row class="opration">
-        <el-col :span="6" style="margin-left: 25px">
+        <el-col :span="2.5" style="margin-left: 25px">
           <el-button @click="favoriteQuestion" style="width: 120px; height: 40px; font-size: 18px;"
             type="primary"><el-icon>
               <Star />
             </el-icon>{{ question.isFavorited ? '取消关注' : '关注' }}</el-button>
         </el-col>
-        <el-col :span="6" style="margin-left: 20px">
+        <el-col :span="2.5" style="margin-left: 20px">
           <el-button @click="likeQuestion" style="width: 120px; height: 40px; font-size: 18px;" type="primary">{{
             question.isLiked ? '取消点赞' : '点赞问题' }}</el-button>
         </el-col>
-        <el-col :span="6" style="margin-left: 20px">
+        <el-col :span="2.5" style="margin-left: 20px">
           <el-button @click="createAnswer" style="width: 120px; height: 40px;font-size: 18px;" type="primary" plain>
             <Edit style="width: 1em; height: 1em;" />写回答
           </el-button>
@@ -35,13 +35,22 @@
   <div class="answers">
     <div v-for="answer in answers" :key="answer.id" class="answer">
       <div class="answer-content">
+        <el-row>
+          <el-col span="2.5">
+            <el-icon size="50"><User /></el-icon>
+          </el-col>
+          <el-col span="2.5" class="answer-author">
+            {{ answer.author }}
+          </el-col>
+        </el-row>
+        <el-row style="color: #666; font-size: 15; margin-top: 10px;">
+          {{ answer.likes }}人赞同了该回答
+        </el-row>
         <p>{{ answer.body }}</p>
         <div class="answer-actions">
-          <button @click="likeAnswer(answer)">{{ answer.likes }} 赞</button>
+          <el-button @click="likeAnswer(answer)" type="primary" plain>赞同{{ answer.likes }}</el-button>
         </div>
-      </div>
-      <div class="answer-author">
-        <span>回答者：{{ answer.author }}</span>
+        
       </div>
     </div>
   </div>
@@ -54,31 +63,6 @@
       </div>
     </div>
   </Dialog>
-
-
-  <!--     <div class="question-detail">
-      <div class="question">
-        <h1>{{ question.title }}</h1>
-        <p>{{ question.content }}</p>
-        <div class="actions">
-          <button @click="likeQuestion">{{ question.isLiked ? '已赞' : '赞' }}</button>
-          <button @click="favoriteQuestion">{{ question.isFavorited ? '已收藏' : '收藏' }}</button>
-        </div>
-      </div>
-      <div class="answers">
-        <div v-for="answer in answers" :key="answer.id" class="answer">
-          <div class="answer-content">
-            <p>{{ answer.content }}</p>
-            <div class="answer-actions">
-              <button @click="likeAnswer(answer)">{{ answer.likes }} 赞</button>
-            </div>
-          </div>
-          <div class="answer-author">
-            <span>回答者：{{ answer.author }}</span>
-          </div>
-        </div>
-      </div>
-    </div> -->
 </template>
 
 <script setup>
@@ -304,18 +288,6 @@ function createAnswer() {
   margin-right: 25px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 .question-detail {
   max-width: 800px;
   margin: auto;
@@ -338,8 +310,11 @@ function createAnswer() {
 
 .answers {
   background-color: #fff;
+  margin-left: auto;
+  margin-right: auto;
   padding: 20px;
   border: 1px solid #eee;
+  width: 1250px;
 }
 
 .answer {
@@ -351,7 +326,14 @@ function createAnswer() {
 }
 
 .answer-author {
-  font-size: 0.8em;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 垂直居中 */
+  align-items: center; /* 水平居中 */
+  font-size: 20px;
+  font-weight: bold;
+  padding-left: 20px;
   color: #666;
 }
 </style>

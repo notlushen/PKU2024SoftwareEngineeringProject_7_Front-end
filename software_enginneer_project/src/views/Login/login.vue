@@ -35,7 +35,7 @@
                         <el-form-item label="验证码" prop="emailcheckcode">
                             <div class="code-btn">
                                 <el-input v-model="signupForm.emailcheckcode" maxlength="6" />
-                                <el-link type="primary" @click="sendEmailCode">获得验证码</el-link>
+                                <el-link type="primary" @click="sendEmailCode">{{ emailCodeLink }}</el-link>
                             </div>
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
@@ -58,7 +58,7 @@
                         <el-form-item label="验证码" prop="emailcheckcode">
                             <div class="code-btn">
                                 <el-input v-model="resetPasswordForm.emailcheckcode" maxlength="6" />
-                                <el-link type="primary" @click="sendEmailCode">获得验证码</el-link>
+                                <el-link type="primary" @click="sendEmailCode">{{ emailCodeLink }}</el-link>
                             </div>
                         </el-form-item>
                         <el-form-item label="重置密码" prop="password">
@@ -83,6 +83,7 @@ import axios from 'axios';
 import type { FormInstance, FormRules } from 'element-plus'
 const router = useRouter();
 const store = useStore();
+//表单处理
 interface RuleForm {
     userid: string
     password: string
@@ -91,7 +92,6 @@ interface RuleForm {
     username: string,
 }
 
-//表单处理
 const activeName = ref('first');
 const loginForm = reactive<RuleForm>({
     userid: '',
@@ -158,7 +158,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 onMounted(() => {
 });
-
 
 //confirmLogin：返回一个boolean，取决于发送请求后收到的代码
 async function confirmLogin(email: string, password: string) {
@@ -227,13 +226,13 @@ const onLogin = async () => {
 };
 
 //注册相关逻辑，与login相似
-async function confirmSignup(id: string, password: string, emailCheckcode: string, username: string) {
-    console.log(id, password);
+async function confirmSignup(email: string, password: string, emailCheckcode: string, username: string) {
+    console.log(email, password);
     try {
         let res = await Request({
             url: '/api/signup',
             params: {
-                userid: id,
+                email: email,
                 userpassword: password,
                 emailcheckcode: emailCheckcode,
                 username: username,
@@ -284,7 +283,7 @@ const onSignup = async () => {
 
 
 
-//随机验证码相关代码(从网上抄的,原文链接：https://blog.csdn.net/jingruoannan/article/details/128163246)
+//随机验证码相关代码(从网上的,原文链接：https://blog.csdn.net/jingruoannan/article/details/128163246)
 import checkcode from '@/components/Login/Checkcode.vue';
 
 const code = (Math.floor(Math.random() * 9000) + 1000).toString();
@@ -304,8 +303,31 @@ const randomNum = (min: number, max: number) => {
 };
 
 //邮箱逻辑
+// 倒计时相关变量和方法
+const countdown = ref(60);
+const emailCodeLink = ref('获得验证码');
+const countdownActive = ref(false);
+
+const startCountdown = () => {
+    const intervalId = setInterval(() => {
+        if (countdown.value > 0) {
+            countdown.value--;
+            emailCodeLink.value = `重新获取(${countdown.value})`;
+        } else {
+            clearInterval(intervalId);
+            countdown.value = 60;
+            emailCodeLink.value = '获得验证码';
+            countdownActive.value = false;
+        }
+    }, 1000);
+};
+
 const sendEmailCode = async () => {
     // 发送邮箱验证码的逻辑
+    if (countdownActive.value) {
+        // 如果倒计时正在进行中，则不执行发送邮件的逻辑
+        return;
+    }
     try {
         let res = await Request({
             url: '/api/confirm',
@@ -320,6 +342,9 @@ const sendEmailCode = async () => {
                 grouping: true,
                 type: 'success',
             });
+            startCountdown(); // 开始倒计时
+            countdownActive.value = true; // 激活倒计时状态
+
         } else {
             ElMessage({
                 message: '发送失败，请重试',
