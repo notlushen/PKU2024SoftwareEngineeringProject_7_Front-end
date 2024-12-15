@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import DetailQuestion from '@/components/DetailQuestion.vue';
+
 import DetailAnswer from '@/components/DetailAnswer.vue';
 
 const post = ref(
