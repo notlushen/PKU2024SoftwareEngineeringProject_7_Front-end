@@ -1,9 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/views/index/Home.vue';
-import Question from '@/views/index/Question.vue';
-import Team from '@/views/index/Team.vue';
-
-
 const routes = [
   {
     path: '/',
@@ -37,13 +32,19 @@ const routes = [
       {
         path: '/detail/:questionId',
         name: 'detail',
-        component: () => import('../views/details/details.vue'),
+        component: () => import('../views/details/Details.vue'),
         children: []
       },
       {
         path: '/inform',
         name: 'inform',
         component: () => import('../views/Index/Inform.vue'),
+        children: []
+      },
+      {
+        path: '/search/:content',
+        name: 'search',
+        component: () => import('../views/Index/Search.vue'),
         children: []
       },
 

@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import EditMarkdown from '@/components/editMarkdown.vue';
+import EditMarkdown from '@/components/EditMarkdown.vue';
 import Dialog from '@/components/Dialog.vue';
 import { reactive,ref } from 'vue';
 const form1 = reactive({

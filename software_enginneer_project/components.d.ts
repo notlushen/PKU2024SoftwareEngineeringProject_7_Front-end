@@ -7,10 +7,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Checkcode: typeof import('./src/components/Login/checkcode.vue')['default']
+    Checkcode: typeof import('./src/components/Login/Checkcode.vue')['default']
     DetailAnswer: typeof import('./src/components/DetailAnswer.vue')['default']
     Dialog: typeof import('./src/components/Dialog.vue')['default']
-    EditMarkdown: typeof import('./src/components/editMarkdown.vue')['default']
+    EditMarkdown: typeof import('./src/components/EditMarkdown.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCo: typeof import('element-plus/es')['ElCo']

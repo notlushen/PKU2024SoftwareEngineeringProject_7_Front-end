@@ -11,7 +11,7 @@ import Request from '@/utils/Request.js'
 import store from "@/store/index.js"
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import Dialog from '@/components/Dialog.vue'
-import EditMarkdown from '@/components/editMarkdown.vue'
+import EditMarkdown from '@/components/EditMarkdown.vue'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
