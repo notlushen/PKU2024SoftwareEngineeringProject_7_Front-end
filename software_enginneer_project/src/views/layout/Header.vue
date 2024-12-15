@@ -7,6 +7,7 @@
       <MyMenu></MyMenu>
       <!--搜索框-->
       <div class="header-search">
+
         <el-input v-model="formInline.content" type="search" placeholder="搜索问题..." class="search-input" />
         <el-button type="primary" round @click="handleSearch">
           搜索
@@ -66,12 +67,13 @@ const login = () => {
 }
 // 定义一个方法来处理搜索表单的提交
 const handleSearch = (event) => {
-  // 您可以在这里添加搜索逻辑，例如使用Vue的路由或调用API
   console.log('搜索被触发');
   console.log(userInfo.userId)
 
+  router.push(`/search/${formInline.content}`)
 };
 import { useStore } from 'vuex';
+import Search from '../Index/Search.vue';
 const store = useStore();
 const userInfo = ref({});
 onMounted(() => {
