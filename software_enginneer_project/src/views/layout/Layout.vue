@@ -4,11 +4,17 @@
       <el-header>
         <Header />
       </el-header>
+
       <el-container>
         <el-main>
+          <el-scrollbar height="90vh">
+
           <router-view></router-view>
+        </el-scrollbar>
         </el-main>
+
       </el-container>
+
     </el-container>
   </div>
 </template>
@@ -39,5 +45,6 @@ const route =useRoute();
 .el-main {
   padding: 20px; /* 设置主要内容区域的内边距 */
   background-color: #fff; /* 设置主要内容区域的背景颜色 */
+  height: max-content;
 }
 </style>

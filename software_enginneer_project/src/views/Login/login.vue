@@ -49,7 +49,7 @@
                     <el-button type="primary" @click="onSignup">注册</el-button>
                 </el-tab-pane>
                 <el-tab-pane label="找回密码" name="third">
-                    <el-form :model="resetPasswordForm" :rules="rules2" ref="signupFormRef" label-width="auto"
+                    <el-form :model="resetPasswordForm" :rules="rules2" ref="resetPasswordFormRef" label-width="auto"
                         style="max-width: 600px">
                         <el-form-item label="北京大学邮箱账号" prop="userid">
                             <el-input v-model="resetPasswordForm.userid" />
@@ -58,7 +58,7 @@
                         <el-form-item label="验证码" prop="emailcheckcode">
                             <div class="code-btn">
                                 <el-input v-model="resetPasswordForm.emailcheckcode" maxlength="6" />
-                                <el-link type="primary" @click="sendEmailCode">{{ emailCodeLink }}</el-link>
+                                <el-link type="primary" @click="sendEmailCode2">{{ emailCodeLink }}</el-link>
                             </div>
                         </el-form-item>
                         <el-form-item label="重置密码" prop="password">
@@ -66,7 +66,7 @@
                         </el-form-item>
 
                     </el-form>
-                    <el-button type="primary" @click="" disabled>找回密码</el-button>
+                    <el-button type="primary" @click="onChangePassword" >找回密码</el-button>
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -102,7 +102,7 @@ const loginForm = reactive<RuleForm>({
 });
 const loginFormRef = ref<FormInstance>();
 const signupFormRef = ref<FormInstance>();
-
+    const resetPasswordFormRef = ref<FormInstance>();
 const signupForm = reactive({
     userid: '',
     username: '',
@@ -112,7 +112,6 @@ const signupForm = reactive({
 });
 const resetPasswordForm = reactive({
     userid: '',
-    username: '',
     password: '',
     emailcheckcode: '',
     checkcode: '',
@@ -166,8 +165,8 @@ async function confirmLogin(email: string, password: string) {
         let res = await Request({
             url: '/api/login',
             params: {
-                email: email,
-                userpassword: password,
+                user_email: email,
+                user_password: password,
             },
             dataType: "json",
         });
@@ -232,8 +231,8 @@ async function confirmSignup(email: string, password: string, emailCheckcode: st
         let res = await Request({
             url: '/api/signup',
             params: {
-                email: email,
-                userpassword: password,
+                user_email: email,
+                user_password: password,
                 emailcheckcode: emailCheckcode,
                 username: username,
             },
@@ -241,10 +240,11 @@ async function confirmSignup(email: string, password: string, emailCheckcode: st
         });
         if (res.signup === 1) {
             console.log("注册成功");
-            return true;
-        } else {
+            return res.signup;
+        } else 
+        {
             console.log("注册失败：", res.data);
-            return false;
+            return res.signup;
         }
     } catch (error) {
         console.error("请求异常：", error);
@@ -255,7 +255,7 @@ const onSignup = async () => {
     signupFormRef.value.validate(async (valid) => {
         if (valid) {
             const signupSuccess = await confirmSignup(signupForm.userid, signupForm.password, signupForm.emailcheckcode, signupForm.username);
-            if (signupSuccess) {
+            if (signupSuccess===1) {
                 refreshCode();
                 resetForm(loginFormRef.value);
                 resetForm(signupFormRef.value)
@@ -264,16 +264,25 @@ const onSignup = async () => {
                     grouping: true,
                     type: 'success',
                 });
-            } else {
+            } else if (signupSuccess===0){
                 ElMessage({
-                    message: '账号或密码错误，请重新输入',
+                    message: '验证码错误，请重新输入',
                     grouping: true,
                     type: 'error',
                 });
                 refreshCode();
                 resetForm(loginFormRef.value);
                 resetForm(signupFormRef.value)
-
+            }
+            else{
+                ElMessage({
+                    message: '账号已存在',
+                    grouping: true,
+                    type: 'error',
+                });
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value)
             }
         } else {
             ElMessage.error('表单验证失败');
@@ -281,7 +290,73 @@ const onSignup = async () => {
     });
 };
 
-
+//更改密码相关逻辑，与注册相似
+async function confirmChangePassword(email: string, password: string, emailCheckcode: string) {
+    console.log(email, password);
+    try {
+        let res = await Request({
+            url: '/api/changepassword',
+            params: {
+                user_email: email,
+                user_password: password,
+                emailcheckcode: emailCheckcode,
+            },
+            dataType: "json",
+        });
+        if (res.result === 1) {
+            console.log("更改成功");
+            return res.result;
+        } else 
+        {
+            console.log("更改失败：", res.data);
+            return res.result;
+        }
+    } catch (error) {
+        console.error("请求异常：", error);
+        return false;
+    }
+}
+const onChangePassword = async () => {
+    resetPasswordFormRef.value.validate(async (valid) => {
+        if (valid) {
+            const isSuccess = await confirmChangePassword(resetPasswordForm.userid, resetPasswordForm.password, resetPasswordForm.emailcheckcode);
+            if (isSuccess===1) {
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value)
+                resetForm(resetPasswordFormRef.value)
+                ElMessage({
+                    message: '更改成功',
+                    grouping: true,
+                    type: 'success',
+                });
+            } else if (isSuccess===0){
+                ElMessage({
+                    message: '验证码错误，请重新输入',
+                    grouping: true,
+                    type: 'error',
+                });
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value);
+                resetForm(resetPasswordFormRef.value);
+            }
+            else{
+                ElMessage({
+                    message: '账号不存在',
+                    grouping: true,
+                    type: 'error',
+                });
+                refreshCode();
+                resetForm(loginFormRef.value);
+                resetForm(signupFormRef.value);
+                resetForm(resetPasswordFormRef.value);
+            }
+        } else {
+            ElMessage.error('表单验证失败');
+        }
+    });
+};
 
 //随机验证码相关代码(从网上的,原文链接：https://blog.csdn.net/jingruoannan/article/details/128163246)
 import checkcode from '@/components/Login/Checkcode.vue';
@@ -333,6 +408,41 @@ const sendEmailCode = async () => {
             url: '/api/confirm',
             params: {
                 userid: signupForm.userid,
+            },
+            dataType: "json",
+        });
+        if (res.confirm == 1) {
+            ElMessage({
+                message: '验证码已发送',
+                grouping: true,
+                type: 'success',
+            });
+            startCountdown(); // 开始倒计时
+            countdownActive.value = true; // 激活倒计时状态
+
+        } else {
+            ElMessage({
+                message: '发送失败，请重试',
+                grouping: true,
+                type: 'error',
+            });
+        }
+    } catch (error) {
+        console.error("请求异常：", error);
+        ElMessage.error('发送验证码失败');
+    }
+};
+const sendEmailCode2 = async () => {
+    // 发送邮箱验证码的逻辑
+    if (countdownActive.value) {
+        // 如果倒计时正在进行中，则不执行发送邮件的逻辑
+        return;
+    }
+    try {
+        let res = await Request({
+            url: '/api/confirm',
+            params: {
+                userid: resetPasswordForm.userid,
             },
             dataType: "json",
         });

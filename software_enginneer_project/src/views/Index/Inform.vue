@@ -9,8 +9,6 @@
       <div class="name">
         <p class="na-name">{{ username }}</p>
         <el-button @click="editname">编辑个人资料</el-button>
-        <!-- 这里需要实现改昵称，加一个输入框 -->
-
       </div>
 
       <Dialog :show="showDialog" :buttons="buttons" @close="showDialog = false" title="编辑个人资料">
@@ -29,10 +27,11 @@
   <div class="questionlist">
     <el-tabs type="border-card">
       <el-tab-pane label="提问">
-        <PostItem v-for="post in posts" :key="post.id" :post="post" />
+        <PostItem v-for="post in myposts" :key="post.id" :post="post" />
       </el-tab-pane>
-      <el-tab-pane label="回答">回答</el-tab-pane>
-      <el-tab-pane label="收藏">收藏</el-tab-pane>
+      <el-tab-pane label="收藏">        
+        <PostItem v-for="post in favoriteQuestion" :key="post.id" :post="post" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 
@@ -47,10 +46,12 @@ import PostItem from '@/components/PostItem.vue';
 const username = ref("");
 import Request from '@/utils/Request.js';
 
-const posts = ref([
+const myposts = ref([
   
 ])
-
+const favoriteQuestion = ref([
+  
+])
 onMounted(async () => {
   console.log(1)
   try {
@@ -86,8 +87,8 @@ onMounted(async () => {
       dataType: "json",
     });
     if (res.code === 200) {
-      posts.value = res.questions;
-      console.log(posts.value)
+      myposts.value = res.questions;
+      console.log(myposts.value)
       return true;
     } else {
 
@@ -99,7 +100,29 @@ onMounted(async () => {
   }
 }
 )
+onMounted(async () => {
+  try {
+    let res = await Request({
+      url: '/api/getfavoritequestion',
+      params: {
+        email: sessionStorage.getItem("email")
+      },
+      dataType: "json",
+    });
+    if (res.code === 200) {
+      favoriteQuestion.value = res.questions;
+      console.log(favoriteQuestion.value)
+      return true;
+    } else {
 
+      return false;
+    }
+  } catch (error) {
+    console.error("请求异常：", error);
+    return false;
+  }
+}
+)
 //修改个人资料
 const nameForm = reactive({
   username: '',

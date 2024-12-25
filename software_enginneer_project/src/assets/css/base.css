@@ -1,0 +1,4 @@
+html, body {
+    height: 100%;
+    overflow: hidden; /* 隐藏溢出的内容 */
+  }

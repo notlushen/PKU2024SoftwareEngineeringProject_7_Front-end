@@ -32,7 +32,7 @@ const routes = [
       {
         path: '/detail/:questionId',
         name: 'detail',
-        component: () => import('../views/details/Details.vue'),
+        component: () => import('../views/details/details.vue'),
         children: []
       },
       {
@@ -42,7 +42,7 @@ const routes = [
         children: []
       },
       {
-        path: '/search/:content',
+        path: '/search/:searchType/:content',
         name: 'search',
         component: () => import('../views/Index/Search.vue'),
         children: []

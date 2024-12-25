@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,watch } from 'vue';
 import PostItem from '@/components/PostItem.vue';
 import Request from '@/utils/Request.js';
 import { useRoute, useRouter } from "vue-router";
@@ -17,14 +17,16 @@ const route = useRoute();
 onMounted(async () => {
     try {
         let res = await Request({
-            url: '/api/search',
+            url: '/api/searchquestions',
             params: {
-                content:route.params.questionId,
+                searchType:route.params.searchType,
+                content:route.params.content,
             },
             dataType: "json",
         });
+        console.log(res.questions)
         if (res.code === 200) {
-            posts.value = res.list;
+            posts.value = res.questions;
             return true;
         } else {
 
@@ -35,6 +37,35 @@ onMounted(async () => {
         return false;
     }
 })
+watch(route, async(newRoute) => {
+  if (newRoute.path.startsWith('/search/')) {
+    // 获取搜索内容
+    const searchContent = newRoute.params.content;
+    console.log('Entered /search route with content:', searchContent);
+    // 执行你想要的操作
+    try {
+        let res = await Request({
+            url: '/api/searchquestions',
+            params: {
+                searchType:newRoute.params.searchType,
+                content:searchContent,
+            },
+            dataType: "json",
+        });
+        console.log(res.questions)
+        if (res.code === 200) {
+            posts.value = res.questions;
+            return true;
+        } else {
+
+            return false;
+        }
+    } catch (error) {
+        console.error("请求异常：", error);
+        return false;
+    }
+  }
+}   )
 defineProps({
     posts: Object
   });

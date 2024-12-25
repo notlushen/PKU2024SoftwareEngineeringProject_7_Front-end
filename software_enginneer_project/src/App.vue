@@ -16,7 +16,6 @@ import { reactive } from 'vue'
 const config = reactive({
   max: 3,
   autoInsertSpace: true,
-
 })
 
 

@@ -7,7 +7,12 @@
       <MyMenu></MyMenu>
       <!--搜索框-->
       <div class="header-search">
+      <el-select v-model="formInline.searchType" placeholder="" class="search-select" >
+        <el-option label="content" value="content" />
+        <el-option label="id" value="id" />
+        <el-option label="tags" value="tags" disabled/>
 
+      </el-select>
         <el-input v-model="formInline.content" type="search" placeholder="搜索问题..." class="search-input" />
         <el-button type="primary" round @click="handleSearch">
           搜索
@@ -53,14 +58,10 @@ import Message from '@/utils/Message'
 
 const router = useRouter();
 const formInline = reactive({
+  searchType:'content',
   content: '',
 });
 
-const showDialog = ref(true);
-const buttons = [{
-  type: "primary",
-  text: "确定",
-}]
 
 const login = () => {
   router.push('/login')
@@ -69,8 +70,20 @@ const login = () => {
 const handleSearch = (event) => {
   console.log('搜索被触发');
   console.log(userInfo.userId)
+  
+  if(!formInline.content){
+  ElMessage({
+        message: '搜索不能为空',
+        grouping: true,
+        type: 'error',
+        duration:500,
 
-  router.push(`/search/${formInline.content}`)
+      });
+    }
+    else{
+    router.push(`/search/${formInline.searchType}/${formInline.content}`);
+    }
+  formInline.content='';
 };
 import { useStore } from 'vuex';
 import Search from '../Index/Search.vue';
@@ -185,7 +198,9 @@ const createQuestion=()=>{
   width: 400px;
   padding: 0px 10px;
 }
-
+.search-select{
+  width:100px;
+}
 .el-dropdown-link {
   cursor: pointer;
   color: var(--el-color-primary);

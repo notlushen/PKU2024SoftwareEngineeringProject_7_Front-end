@@ -30,7 +30,9 @@ const form1 = reactive({
 
 })
 const submit = async () => {
+    if(form1.title!=''&&form1.content!=''){
     try {
+
         let res = await Request({
             url: '/api/createquestion',
             params: {
@@ -56,7 +58,14 @@ const submit = async () => {
         }
     } catch (error) {
     }
-
+    }
+    else{
+        ElMessage({
+                message: '内容不能为空',
+                grouping: true,
+                type: 'error',
+            });
+    }
 }
 </script>
 
