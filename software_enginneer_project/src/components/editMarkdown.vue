@@ -29,7 +29,7 @@ const prop=defineProps({
 
 })
 const emit=defineEmits();
-const change=(markdownContent,htmlContent)=>{
+const change=(markdownContent:any,htmlContent:any)=>{
     emit("update:modelValue",markdownContent);
     emit("htmlContent",htmlContent);
 }

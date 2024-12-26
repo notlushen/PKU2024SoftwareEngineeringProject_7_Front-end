@@ -1,24 +1,21 @@
 <template>
     <div class="create-question">
         <div class="editor">
-            <el-form :model="form1" label-width="auto" class="form" @submit.native.prevent>
+            <el-form :model="form1" label-width="auto" class="form">
                 <div>
-                    <el-card>问题标题</el-card>
+                    <el-form-item label="组队标题">
                     <el-input v-model="form1.title" placeholder="请输入标题"></el-input>
+                </el-form-item>
                 </div>
-                <div>
-                    <el-form-item >
-                        <el-select v-model="form1.courseType" placeholder="" class="search-select">
-                            <el-option label="专业课" value="专业课" />
-                            <el-option label="公选课" value="公选课" />
-                            <el-option label="通识课" value="通识课" />
-                            <el-option label="其他课" value="其他课" />
-                        </el-select>
-                        <el-input-tag v-model="form1.tags" :max="2" placeholder="enter up to 2 tags" />
-                    </el-form-item>
-
-                </div>
-                <el-card>问题正文</el-card>
+                <el-form-item label="总人数">
+                    <el-input-number v-model="form1.total_members" :min="2" :max="100" @change="" />
+                </el-form-item>
+                <el-form-item label="截止日期">
+                    <el-date-picker v-model="form1.expiration_date" type="datetime" :disabled-date="disabledDate" placeholder="Pick a Date" 
+                        format="YYYY/MM/DD HH:mm:ss" 
+                        value-format="YYYY-MM-DD h:m:s"/>
+                </el-form-item>
+                <el-card>组队详情</el-card>
                 <EditMarkdown v-model="form1.content"></EditMarkdown>
                 <el-form-item>
                     <el-button type="primary" @click="submit">发布</el-button>
@@ -34,25 +31,29 @@ import { reactive } from 'vue';
 import Request from '@/utils/Request.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '@/router';
-
+const disabledDate= (time:any)=> {
+          // 禁用选择过去的日期
+          return time.getTime() < Date.now();
+}
 const form1 = reactive({
     title: '',
     content: '',
-    tags: [],
-    courseType: '专业课',
+    total_members: 0,
+    expiration_date: '',
 })
 const submit = async () => {
-    if (form1.title != '' && form1.content != '') {
+    const a = Date.now();
+    console.log(a)
+    if (form1.title != '' && form1.content != ''&&form1.total_members!=0) {
         try {
-
             let res = await Request({
-                url: '/api/createquestion',
+                url: '/api/createteam',
                 params: {
                     title: form1.title,
-                    body: form1.content,
+                    description: form1.content,
                     email: sessionStorage.getItem("email"),
-                    tags:form1.tags,
-                    courseType:form1.courseType,
+                    total_members: form1.total_members,
+                    expiration_date: form1.expiration_date,
                 },
                 dataType: "json",
             });
@@ -62,7 +63,7 @@ const submit = async () => {
                     grouping: true,
                     type: 'success',
                 });
-                router.push("/index")
+                router.push("/index/team")
             } else {
                 ElMessage({
                     message: '发布失败',
@@ -74,8 +75,10 @@ const submit = async () => {
         }
     }
     else {
+        console.log(form1.expiration_date)
+
         ElMessage({
-            message: '内容不能为空',
+            message: '内容存在问题，请检查',
             grouping: true,
             type: 'error',
         });
@@ -94,6 +97,7 @@ const submit = async () => {
 
         .form {
             max-width: 100%;
+            width: 100%;
             height: 100%;
         }
     }

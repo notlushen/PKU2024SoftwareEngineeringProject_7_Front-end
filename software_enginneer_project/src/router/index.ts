@@ -55,7 +55,7 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('../views/Login/login.vue'),
-    beforeEnter: (to, from, next) => {
+    beforeEnter: (to:any, from:any, next:any) => {
       sessionStorage.isLogin=false
       next()
    }
@@ -63,10 +63,14 @@ const routes = [
 
   {
     path: '/editQuestion',
-    name: 'edit',
+    name: 'editQuestion',
     component: () => import('../views/forum/createQuestion.vue'),
   },
-
+  {
+    path: '/editTeam',
+    name: 'editTeam',
+    component: () => import('../views/forum/createTeam.vue'),
+  },
 ];
 
 const router = createRouter({
@@ -74,17 +78,17 @@ const router = createRouter({
   routes,
 });
 
-  // router.beforeEach((to,from,next)=>{
-  //   const isLogin = sessionStorage.getItem('isLogin')==='true';
-  //   console.log(  (isLogin||(to.name==="login")));
+  router.beforeEach((to,from,next)=>{
+    const isLogin = sessionStorage.getItem('isLogin')==='true';
+    console.log(  (isLogin||(to.name==="login")));
 
-  //   if(isLogin||(to.name==='login')){
-  //     console.log("notmylogin");
-  //     next();
-  //   }
-  //   else{
-  //     console.log("mylogin");
-  //     next('/login');
-  //   }
-  // })
+    if(isLogin||(to.name==='login')){
+      console.log("notmylogin");
+      next();
+    }
+    else{
+      console.log("mylogin");
+      next('/login');
+    }
+  })
 export default router;

@@ -32,6 +32,9 @@
       <el-tab-pane label="收藏">        
         <PostItem v-for="post in favoriteQuestion" :key="post.id" :post="post" />
       </el-tab-pane>
+      <el-tab-pane label="组队">        
+        <TeamItem v-for="team in teams" :key="team.id" :team="team" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 
@@ -41,19 +44,28 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus'
+import TeamItem from '@/components/TeamItem.vue';
 import type { TabsPaneContext } from 'element-plus'
 import PostItem from '@/components/PostItem.vue';
 const username = ref("");
 import Request from '@/utils/Request.js';
 
 const myposts = ref([
-  
+  {
+   id:0, 
+  }
 ])
 const favoriteQuestion = ref([
-  
+{
+   id:0, 
+  }
 ])
+const teams = ref([
+{
+   id:0, 
+  }
+]);
 onMounted(async () => {
-  console.log(1)
   try {
     let res = await Request({
       url: '/api/getusername',
@@ -74,7 +86,6 @@ onMounted(async () => {
     console.error("请求异常：", error);
     return false;
   }
-
 })
 
 onMounted(async () => {
@@ -123,6 +134,28 @@ onMounted(async () => {
   }
 }
 )
+onMounted(async () => {
+  try {
+    let res = await Request({
+      url: '/api/getmyteam',
+      params: {
+        email: sessionStorage.getItem("email")
+      },
+      dataType: "json",
+    });
+    if (res.code === 200) {
+      teams.value = res.teams;
+      return true;
+    } else {
+
+      return false;
+    }
+  } catch (error) {
+    console.error("请求异常：", error);
+    return false;
+  }
+}
+)
 //修改个人资料
 const nameForm = reactive({
   username: '',
@@ -153,6 +186,7 @@ const submit = async () => {
     if (res.code === 200) {
       console.log("修改成功");
       username.value = res.username
+      showDialog.value = false
       return true;
     } else {
       console.log("修改失败：", res.data);

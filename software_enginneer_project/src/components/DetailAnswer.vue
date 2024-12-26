@@ -2,7 +2,7 @@
   <div class="divider">
     <div class="header">
       <el-row class="tag-row">
-        <el-button :key="tag.id" v-for="tag in tags" type="primary" class="tag" plain round>{{ tag.body }}</el-button>
+        <el-button  v-for="tag in tags" type="primary" class="tag" plain round>{{ tag }}</el-button>
       </el-row>
       <el-row class="title">
         <el-col>{{ question.title }} </el-col>
@@ -86,13 +86,10 @@ VMdEditor.use(githubTheme, {
   Hljs: hljs,
 });
 
-import CreateAnswer from '@/views/forum/createAnswer.vue';
 import { ref } from 'vue';
 import Request from '@/utils/Request.js';
 const tags = ref([
-  { id: 1, body: 'tag1' },
-  { id: 2, body: 'tag2' },
-  { id: 3, body: 'tag3' }
+
 ]);
 
 const vote = async (content_type, content_id, vote_type) => {
@@ -202,8 +199,9 @@ const getQuestion = async (questionId) => {
       dataType: "json",
     });
     if (res.code === 200) {
-      question.value = res.question
-
+      question.value = res.question;
+      tags.value=res.tags;
+      console.log(tags)
     } else {
       ElMessage({
         message: '获取问题失败',

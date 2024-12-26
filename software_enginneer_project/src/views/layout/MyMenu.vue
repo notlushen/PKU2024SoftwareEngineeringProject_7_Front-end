@@ -1,6 +1,6 @@
 <template>
 <el-menu
-    :default-active="$route.path"
+    :default-active="route.path"
     class="menu"
     mode="horizontal"
     router>
@@ -18,9 +18,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 const useMenus = ref([
   {name:'首页',url:'/index/home'},
-  {name:'问答',url:'/index/question'},
+  //{name:'问答',url:'/index/question'},
   {name:'组队',url:'/index/team'},
 ])
 </script>

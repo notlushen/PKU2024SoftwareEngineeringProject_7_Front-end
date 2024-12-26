@@ -9,8 +9,9 @@
 
                     <el-form :model="loginForm" :rules="rules1" ref="loginFormRef" label-width="auto"
                         style="max-width: 600px">
-                        <el-form-item label="北大邮箱账号" prop="userid">
-                            <el-input v-model="loginForm.userid" placeholder="请输入北大邮箱账号" />
+                        <el-form-item label="邮箱账号" prop="userid">
+                            <el-input v-model="loginForm.userid" placeholder="请输入邮箱账号" />
+
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
                             <el-input v-model="loginForm.password" type="password" show-password placeholder="请输入密码" />
@@ -28,7 +29,7 @@
                 <el-tab-pane label="注册" name="second">
                     <el-form :model="signupForm" :rules="rules2" ref="signupFormRef" label-width="auto"
                         style="max-width: 600px">
-                        <el-form-item label="北京大学邮箱账号" prop="userid">
+                        <el-form-item label="邮箱账号" prop="userid">
                             <el-input v-model="signupForm.userid" />
                         </el-form-item>
 
@@ -51,7 +52,7 @@
                 <el-tab-pane label="找回密码" name="third">
                     <el-form :model="resetPasswordForm" :rules="rules2" ref="resetPasswordFormRef" label-width="auto"
                         style="max-width: 600px">
-                        <el-form-item label="北京大学邮箱账号" prop="userid">
+                        <el-form-item label="邮箱账号" prop="userid">
                             <el-input v-model="resetPasswordForm.userid" />
                         </el-form-item>
 
@@ -66,7 +67,7 @@
                         </el-form-item>
 
                     </el-form>
-                    <el-button type="primary" @click="onChangePassword" >找回密码</el-button>
+                    <el-button type="primary" @click="onChangePassword">找回密码</el-button>
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -76,13 +77,11 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Request from '@/utils/Request.js';
 import axios from 'axios';
 import type { FormInstance, FormRules } from 'element-plus'
 const router = useRouter();
-const store = useStore();
 //表单处理
 interface RuleForm {
     userid: string
@@ -91,30 +90,34 @@ interface RuleForm {
     emailcheckcode: string,
     username: string,
 }
-
+const loginFormRef = ref<FormInstance>();
+const signupFormRef = ref<FormInstance>();
+const resetPasswordFormRef = ref<FormInstance>();
 const activeName = ref('first');
+
 const loginForm = reactive<RuleForm>({
     userid: '',
     password: '',
     checkcode: '',
     emailcheckcode: '',
     username: '',
+
 });
-const loginFormRef = ref<FormInstance>();
-const signupFormRef = ref<FormInstance>();
-    const resetPasswordFormRef = ref<FormInstance>();
+
 const signupForm = reactive({
     userid: '',
     username: '',
     password: '',
     emailcheckcode: '',
     checkcode: '',
+
 });
 const resetPasswordForm = reactive({
     userid: '',
     password: '',
     emailcheckcode: '',
     checkcode: '',
+
 });
 const rules1 = reactive<FormRules<RuleForm>>({
     userid: [
@@ -124,6 +127,16 @@ const rules1 = reactive<FormRules<RuleForm>>({
             message: '请输入正确的邮箱地址',
             trigger: ['blur', 'change'],
         },
+        {
+            validator: (rule, value, callback) => {
+                if (value && !/@stu\.pku\.edu\.cn$/.test(value) && !/@pku\.edu\.cn$/.test(value)) {
+                    callback(new Error('邮箱必须以@stu.pku.edu.cn或@pku.edu.cn结尾'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: ['blur', 'change']
+        },
     ],
     password: [
         { required: true, message: '请输入密码', trigger: 'blur' },
@@ -132,14 +145,24 @@ const rules1 = reactive<FormRules<RuleForm>>({
         { required: true, message: '请输入验证码', trigger: 'blur' },
     ],
 });
-const rules2 = {
+const rules2 = reactive<FormRules<RuleForm>>({
     userid: [
         { required: true, message: '请输入北京大学邮箱账号', trigger: 'blur' },
         {
             type: 'email',
             message: '请输入正确的邮箱地址',
             trigger: ['blur', 'change'],
-        }],
+        }, {
+            validator: (rule, value, callback) => {
+                if (value && !/@stu\.pku\.edu\.cn$/.test(value) && !/@pku\.edu\.cn$/.test(value)) {
+                    callback(new Error('邮箱必须以@stu.pku.edu.cn或@pku.edu.cn结尾'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: ['blur', 'change']
+        },
+    ],
     emailcheckcode: [
         { required: true, message: '请输入验证码', trigger: 'blur' },
     ],
@@ -150,13 +173,11 @@ const rules2 = {
         { required: true, message: '请输入用户昵称', trigger: 'blur' },
     ],
 
-};
+});
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()
 }
-onMounted(() => {
-});
 
 //confirmLogin：返回一个boolean，取决于发送请求后收到的代码
 async function confirmLogin(email: string, password: string) {
@@ -184,14 +205,12 @@ async function confirmLogin(email: string, password: string) {
 }
 //onLogin：登录按钮逻辑实现
 const onLogin = async () => {
-    loginFormRef.value.validate(async (valid) => {
+    loginFormRef.value?.validate(async (valid) => {
         if (valid) {
             const loginSuccess = await confirmLogin(loginForm.userid, loginForm.password);
             if (loginSuccess) {
-                store.commit("isLogin", true);
                 const id = loginForm.userid;
                 const password = loginForm.password
-                store.commit("updateLoginUserInfo", { userId: id });
 
                 sessionStorage.setItem('email', id);
                 sessionStorage.setItem('userPassword', password);
@@ -241,8 +260,7 @@ async function confirmSignup(email: string, password: string, emailCheckcode: st
         if (res.signup === 1) {
             console.log("注册成功");
             return res.signup;
-        } else 
-        {
+        } else {
             console.log("注册失败：", res.data);
             return res.signup;
         }
@@ -252,10 +270,10 @@ async function confirmSignup(email: string, password: string, emailCheckcode: st
     }
 }
 const onSignup = async () => {
-    signupFormRef.value.validate(async (valid) => {
+    signupFormRef.value?.validate(async (valid) => {
         if (valid) {
             const signupSuccess = await confirmSignup(signupForm.userid, signupForm.password, signupForm.emailcheckcode, signupForm.username);
-            if (signupSuccess===1) {
+            if (signupSuccess === 1) {
                 refreshCode();
                 resetForm(loginFormRef.value);
                 resetForm(signupFormRef.value)
@@ -264,7 +282,7 @@ const onSignup = async () => {
                     grouping: true,
                     type: 'success',
                 });
-            } else if (signupSuccess===0){
+            } else if (signupSuccess === 0) {
                 ElMessage({
                     message: '验证码错误，请重新输入',
                     grouping: true,
@@ -274,7 +292,7 @@ const onSignup = async () => {
                 resetForm(loginFormRef.value);
                 resetForm(signupFormRef.value)
             }
-            else{
+            else {
                 ElMessage({
                     message: '账号已存在',
                     grouping: true,
@@ -306,8 +324,7 @@ async function confirmChangePassword(email: string, password: string, emailCheck
         if (res.result === 1) {
             console.log("更改成功");
             return res.result;
-        } else 
-        {
+        } else {
             console.log("更改失败：", res.data);
             return res.result;
         }
@@ -317,10 +334,10 @@ async function confirmChangePassword(email: string, password: string, emailCheck
     }
 }
 const onChangePassword = async () => {
-    resetPasswordFormRef.value.validate(async (valid) => {
+    resetPasswordFormRef.value?.validate(async (valid) => {
         if (valid) {
             const isSuccess = await confirmChangePassword(resetPasswordForm.userid, resetPasswordForm.password, resetPasswordForm.emailcheckcode);
-            if (isSuccess===1) {
+            if (isSuccess === 1) {
                 refreshCode();
                 resetForm(loginFormRef.value);
                 resetForm(signupFormRef.value)
@@ -330,7 +347,7 @@ const onChangePassword = async () => {
                     grouping: true,
                     type: 'success',
                 });
-            } else if (isSuccess===0){
+            } else if (isSuccess === 0) {
                 ElMessage({
                     message: '验证码错误，请重新输入',
                     grouping: true,
@@ -341,7 +358,7 @@ const onChangePassword = async () => {
                 resetForm(signupFormRef.value);
                 resetForm(resetPasswordFormRef.value);
             }
-            else{
+            else {
                 ElMessage({
                     message: '账号不存在',
                     grouping: true,

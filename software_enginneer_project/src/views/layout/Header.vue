@@ -10,8 +10,7 @@
       <el-select v-model="formInline.searchType" placeholder="" class="search-select" >
         <el-option label="content" value="content" />
         <el-option label="id" value="id" />
-        <el-option label="tags" value="tags" disabled/>
-
+        <el-option label="tags" value="tags" />
       </el-select>
         <el-input v-model="formInline.content" type="search" placeholder="搜索问题..." class="search-input" />
         <el-button type="primary" round @click="handleSearch">
@@ -20,12 +19,15 @@
         <el-button type="primary" round @click="createQuestion">
           提问
         </el-button>
+        <el-button type="primary" round @click="createTeam">
+          组队
+        </el-button>
       </div>
       <!--用户信息-->
-      <div  class="user" v-if="userInfo.userId">
+      <div  class="user" v-if="username!==''">
         <el-dropdown>
           <span class="el-dropdown-link">
-            {{ userInfo.userId }}
+            {{ username }}
           </span>
           <template #dropdown>
             <el-dropdown-menu>
@@ -55,6 +57,7 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import MyMenu from './MyMenu.vue';
 import { ArrowDown } from '@element-plus/icons-vue'
 import Message from '@/utils/Message'
+import Request from '@/utils/Request.js';
 
 const router = useRouter();
 const formInline = reactive({
@@ -68,9 +71,6 @@ const login = () => {
 }
 // 定义一个方法来处理搜索表单的提交
 const handleSearch = (event) => {
-  console.log('搜索被触发');
-  console.log(userInfo.userId)
-  
   if(!formInline.content){
   ElMessage({
         message: '搜索不能为空',
@@ -88,45 +88,32 @@ const handleSearch = (event) => {
 import { useStore } from 'vuex';
 import Search from '../Index/Search.vue';
 const store = useStore();
-const userInfo = ref({});
-onMounted(() => {
-  //getUserInfo();
-  console.log(sessionStorage.isLogin)
+const username = ref("");
 
-  console.log(sessionStorage.userId)
-  userInfo.value.userId=sessionStorage.email
-  console.log(userInfo.value.userId)
-
-});
-
-const getUserInfo = async () => {
-  let res = await Request({
-    url: '/getUserInfo',
-    params: {
-      id: id,
-      password: password,
-    },
-    dataType: "json",
-  });
-  if (!res) {
-    return;
-  }
-  store.commit("updateLoginUserInfo", res.data)
-}
-
-watch( 
-  () => store.state.loginUserInfo,
-  
-  (newVal, oldVal) => {
-    if (newVal != undefined && newVal != null) {
-     // userInfo.value = newVal;
+onMounted(async () => {
+  try {
+    let res = await Request({
+      url: '/api/getusername',
+      params: {
+        userid: sessionStorage.getItem("email"),
+        userpassword: sessionStorage.getItem("userPassword"),
+      },
+      dataType: "json",
+    });
+    if (res.code === 200) {
+      username.value=res.username
+      return true;
+    } else {
+      username.value=""
+      return false;
     }
-    else {
-     // userInfo = {};
-    }
+  } catch (error) {
+    console.error("请求异常：", error);
+    return false;
   }
+})
 
-);
+
 const enterInform=()=>{
   router.push('/inform')
 }
@@ -142,7 +129,14 @@ const createQuestion=()=>{
     router.push('/editQuestion')
   }
 }
-
+const createTeam=()=>{
+  if(!sessionStorage.isLogin){
+    Message.warning("请先登录！")
+  }
+  else{
+    router.push('/editTeam')
+  }
+}
 </script>
 
 <style scoped>
